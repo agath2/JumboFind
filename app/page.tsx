@@ -2,28 +2,33 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="flex h-full items-center justify-center bg-[#f4f6f8] px-4">
-      <div className="w-full max-w-md text-center">
-        <h1 className="mb-10 text-4xl font-bold text-[#3E5E8C]">
-          Tufts Lost and Found
-        </h1>
+    <main className="flex min-h-screen flex-col bg-[#f4f6f8] px-4">
+      <div className="flex flex-1 items-center justify-center">
+        <div className="w-full max-w-md text-center">
+          <h1 className="mb-10 text-4xl font-bold text-[#3E5E8C]">
+            Tufts Lost and Found
+          </h1>
 
-        <div className="space-y-4">
-          <Link
-            href="/lostfeed"
-            className="block w-full rounded-lg bg-[#3E5E8C] px-6 py-4 text-lg font-medium text-white transition hover:bg-[#2f486b]"
-          >
-            Lost
-          </Link>
+          <div className="space-y-4">
+            <Link
+              href="/lostfeed"
+              className="block w-full rounded-lg bg-[#3E5E8C] px-6 py-4 text-lg font-medium text-white transition hover:bg-[#2f486b]"
+            >
+              Lost
+            </Link>
 
-          <Link
-            href="/reportitem"
-            className="block w-full rounded-lg bg-[#3E5E8C] px-6 py-4 text-lg font-medium text-white transition hover:bg-[#2f486b]"
-          >
-            Found
-          </Link>
+            <Link
+              href="/reportitem"
+              className="block w-full rounded-lg bg-[#3E5E8C] px-6 py-4 text-lg font-medium text-white transition hover:bg-[#2f486b]"
+            >
+              Found
+            </Link>
+          </div>
         </div>
       </div>
+      <p className="pb-6 text-center text-sm text-[#3E5E8C]">
+        © TUFTS UNIVERSITY 2026
+      </p>
     </main>
   );
 }
