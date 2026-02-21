@@ -2,6 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
+// Define the formal TypeScript contract
+type LostItem = {
+  id: number;
+  title: string;
+  description?: string; // The '?' tells TypeScript this field might be missing, which is okay!
+  location: string;
+  category: string;
+  isFound: boolean;
+  date: string;
+  imageUrl: string;
+};
 
 // Mock Data with YYYY-MM-DD format
 const MOCK_ITEMS = [
