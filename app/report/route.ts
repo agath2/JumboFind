@@ -3,18 +3,7 @@ import sharp from "sharp";
 import { openDb } from "../db";
 import * as fs from "node:fs";
 import { createHash } from "node:crypto";
-
-type LostItemPayload = {
-  name: string;
-  desc: string;
-  tags: string[];
-  location: string;
-  lat: number;
-  lng: number;
-  picture: string;
-  phoneNumber: string;
-  email: string;
-};
+import { LostItem } from "../item";
 
 function splitTags(input: FormDataEntryValue | null): string[] {
   if (!input) return [];
@@ -27,7 +16,7 @@ function splitTags(input: FormDataEntryValue | null): string[] {
 export async function POST(request: Request) {
   const contentType = request.headers.get("content-type") ?? "";
 
-  let payload: LostItemPayload;
+  let payload: LostItem;
 
   if (contentType.includes("multipart/form-data")) {
     const formData = await request.formData();
@@ -115,7 +104,7 @@ export async function POST(request: Request) {
     `INSERT INTO items (name, desc, tags, location, lat, lng, picture, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     payload.name,
     payload.desc,
-    payload.tags,
+    JSON.stringify(payload.tags),
     payload.location,
     payload.lat,
     payload.lng,

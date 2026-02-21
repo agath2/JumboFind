@@ -13,7 +13,7 @@ async function setup() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       desc TEXT NOT NULL,
-      tags TEXT[] NOT NULL,
+      tags TEXT NOT NULL DEFAULT '[]' CHECK (json_valid(tags)),
       location TEXT NOT NULL,
       lat REAL NOT NULL,
       lng REAL NOT NULL,
