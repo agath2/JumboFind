@@ -10,6 +10,8 @@ type LostItemPayload = {
   lat: number;
   lng: number;
   picture: string;
+  phoneNumber: string;
+  email: string;
 };
 
 function splitTags(input: FormDataEntryValue | null): string[] {
@@ -78,6 +80,8 @@ export async function POST(request: Request) {
       lat: Number(formData.get("lat")),
       lng: Number(formData.get("lng")),
       picture,
+      phoneNumber: String(formData.get("phoneNumber")),
+      email: String(formData.get("email")),
     };
   } else {
     return NextResponse.json(
@@ -102,14 +106,16 @@ export async function POST(request: Request) {
   console.log("[report] Lost item payload:", payload);
   const db = await openDb();
   await db.run(
-    `INSERT INTO items (name, desc, tags, location, lat, lng, picture) VALUES (?, ?, ?, ?, ?)`,
+    `INSERT INTO items (name, desc, tags, location, lat, lng, picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     payload.name,
     payload.desc,
     JSON.stringify(payload.tags),
     payload.location,
     payload.lat,
     payload.lng,
-    payload.picture
+    payload.picture,
+    payload.phoneNumber,
+    payload.email
   );
   await db.close();
   console.log("[report] Lost item saved to database.");
