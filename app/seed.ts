@@ -1,6 +1,8 @@
 import { openDb } from "@/app/db";
+import fs from "fs";
 
 async function setup() {
+  fs.mkdirSync("data/img", { recursive: true });
   const db = await openDb();
   await db.exec(`
     CREATE TABLE IF NOT EXISTS items (

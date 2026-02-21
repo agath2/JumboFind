@@ -7,6 +7,8 @@ type LostItemPayload = {
   desc: string;
   tags: string[];
   location: string;
+  lat: number;
+  lng: number;
   picture: string;
 };
 
@@ -52,11 +54,11 @@ export async function POST(request: Request) {
     let picture: string;
     try {
       const buffer = await file.arrayBuffer();
-      const webpBuffer = await sharp(Buffer.from(buffer))
-        .webp({ quality: 80 })
-        .toBuffer();
+      const webp = sharp(Buffer.from(buffer)).webp({ quality: 80 });
 
-      picture = `image(path=${file.name}, type=${file.type}, size=${webpBuffer.length} bytes)`;
+      const hash = require("crypto").createHash("sha256").update(await webp.toBuffer()).digest("hex");
+      await webp.toFile(`./data/img/${hash}.webp`);
+      picture = `${hash}`;
     } catch (error) {
       console.error("[report] Failed to convert image to WebP:", error);
       return NextResponse.json(
@@ -69,10 +71,12 @@ export async function POST(request: Request) {
     }
 
     payload = {
-      name: String(formData.get("name") ?? ""),
-      desc: String(formData.get("desc") ?? ""),
+      name: String(formData.get("name")),
+      desc: String(formData.get("desc")),
       tags: splitTags(formData.get("tags")),
-      location: String(formData.get("loc") ?? ""),
+      location: String(formData.get("loc")),
+      lat: Number(formData.get("lat")),
+      lng: Number(formData.get("lng")),
       picture,
     };
   } else {
@@ -98,11 +102,13 @@ export async function POST(request: Request) {
   console.log("[report] Lost item payload:", payload);
   const db = await openDb();
   await db.run(
-    `INSERT INTO items (name, desc, tags, location, picture) VALUES (?, ?, ?, ?, ?)`,
+    `INSERT INTO items (name, desc, tags, location, lat, lng, picture) VALUES (?, ?, ?, ?, ?)`,
     payload.name,
     payload.desc,
     JSON.stringify(payload.tags),
     payload.location,
+    payload.lat,
+    payload.lng,
     payload.picture
   );
   await db.close();
