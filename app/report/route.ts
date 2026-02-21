@@ -3,7 +3,7 @@ import sharp from "sharp";
 import { openDb } from "../db";
 import * as fs from "node:fs";
 import { createHash } from "node:crypto";
-import { LostItem } from "../item";
+import { LostItem } from "../models/item";
 
 function splitTags(input: FormDataEntryValue | null): string[] {
   if (!input) return [];
