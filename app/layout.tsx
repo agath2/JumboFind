@@ -30,7 +30,9 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable} ${inter.variable}`}>
       <body className={inter.className}>
         <Navbar />
-        {children}
+        <div className="h-[calc(100vh-5rem)] overflow-auto">
+          {children}
+        </div>
       </body>
     </html>
   );

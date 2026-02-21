@@ -32,16 +32,31 @@ async function setup() {
       lat REAL NOT NULL,
       lng REAL NOT NULL
     )
-    `)
+  `)
+  let locraw: any[] = JSON.parse(fs.readFileSync("./app/models/medford-locations.json").toString()).maps[0].locations;
 
-  // TODO POPULATE LOCATION TABLE
-  let locations = ["tisch", ]
+    let locations = locraw.map((loc: any) => {
+        return {
+            name: loc.name,
+            address: loc.address1,
+            lat: loc.latitude,
+            lng: loc.longitude
+        }
+    })
+    const placeholders = locations.map(() => "(?, ?, ?, ?)").join(", ");
+    const values = locations.flatMap((loc) => [
+        loc.name,
+        loc.address,
+        loc.lat,
+        loc.lng,
+    ]);
 
-  await db.run(`
-    INSERT INTO locations
-    VALUES ${locations}
-    `
-  )
+    await db.run(
+        `INSERT INTO locations (name, address, lat, lng)
+         VALUES ${placeholders}`,
+        values
+    );
+
   await db.exec(`
   CREATE TABLE IF NOT EXISTS locations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,7 +64,7 @@ async function setup() {
   )
   `)
   // TODO POPULATE TAGS
-    
+
   console.log("Database setup complete.");
   await db.close();
 }
