@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import sharp from "sharp";
+import { openDb } from "../db";
 
 type LostItemPayload = {
   name: string;
@@ -95,6 +96,17 @@ export async function POST(request: Request) {
   }
 
   console.log("[report] Lost item payload:", payload);
+  const db = await openDb();
+  await db.run(
+    `INSERT INTO items (name, desc, tags, location, picture) VALUES (?, ?, ?, ?, ?)`,
+    payload.name,
+    payload.desc,
+    JSON.stringify(payload.tags),
+    payload.location,
+    payload.picture
+  );
+  await db.close();
+  console.log("[report] Lost item saved to database.");
 
   return NextResponse.json({
     ok: true,
