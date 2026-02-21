@@ -115,7 +115,7 @@ export async function POST(request: Request) {
     `INSERT INTO items (name, desc, tags, location, lat, lng, picture, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     payload.name,
     payload.desc,
-    payload.tags,
+    JSON.stringify(payload.tags),
     payload.location,
     payload.lat,
     payload.lng,
