@@ -46,7 +46,7 @@ export async function GET(request: Request) {
 
     if (search_params.tags && search_params.tags.length > 0) {
         const placeholders = search_params.tags.map(() => '?').join(',');
-        sql += ` AND tag IN (${placeholders})`;
+        sql += ` AND EXISTS (SELECT 1 FROM json_each(items.tags) WHERE value IN (${placeholders}))`;
         params.push(...search_params.tags);
     }
 
