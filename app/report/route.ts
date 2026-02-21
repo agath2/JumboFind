@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
+import sharp from "sharp";
 
 type LostItemPayload = {
   name: string;
   desc: string;
   tags: string[];
   location: string;
-  picture: string | null;
+  picture: string;
 };
 
 function splitTags(input: FormDataEntryValue | null): string[] {
@@ -25,12 +26,45 @@ export async function POST(request: Request) {
     const formData = await request.formData();
 
     const file = formData.get("img");
-    let picture: string | null = null;
 
-    if (file instanceof File) {
-      picture = `uploaded-file:${file.name} (${file.type || "unknown-type"}, ${file.size} bytes)`;
-    } else if (typeof file === "string") {
-      picture = file;
+    if (!(file instanceof File)) {
+      return NextResponse.json(
+        {
+          ok: false,
+          msg: "Image must be uploaded as a file.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (!file.type.startsWith("image/")) {
+      return NextResponse.json(
+        {
+          ok: false,
+          msg: "Uploaded file must be an image.",
+        },
+        { status: 400 }
+      );
+    }
+
+    // convert img to webp
+    let picture: string;
+    try {
+      const buffer = await file.arrayBuffer();
+      const webpBuffer = await sharp(Buffer.from(buffer))
+        .webp({ quality: 80 })
+        .toBuffer();
+
+      picture = `image(path=${file.name}, type=${file.type}, size=${webpBuffer.length} bytes)`;
+    } catch (error) {
+      console.error("[report] Failed to convert image to WebP:", error);
+      return NextResponse.json(
+        {
+          ok: false,
+          msg: "Failed to convert image to WebP format.",
+        },
+        { status: 500 }
+      );
     }
 
     payload = {
@@ -44,17 +78,17 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error: "Unsupported content type. Use multipart/form-data.",
+        msg: "Unsupported content type. Use multipart/form-data.",
       },
       { status: 415 }
     );
   }
 
-  if (!payload.name || !payload.desc || !payload.location) {
+  if (!payload.name || !payload.desc || !payload.location || !payload.picture) {
     return NextResponse.json(
       {
         ok: false,
-        error: "name, desc, and loc are required.",
+        msg: "name, desc, and loc, and img are required.",
       },
       { status: 400 }
     );
@@ -64,7 +98,7 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     ok: true,
-    message: "Report received.",
+    msg: "Report received.",
     data: payload,
   });
 }
