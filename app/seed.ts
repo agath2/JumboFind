@@ -1,5 +1,5 @@
 import { openDb } from "@/app/db";
-import fs from "fs";
+import * as fs from "node:fs";
 
 async function setup() {
   fs.mkdirSync("data/img", { recursive: true });
@@ -20,8 +20,8 @@ async function setup() {
       picture TEXT NOT NULL,
       found BOOL NOT NULL DEFAULT FALSE,
       date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      phone_number TEXT NOT NULL,
-      email TEXT NOT NULL
+      phone TEXT,
+      email TEXT
     )
   `);
   await db.exec(`

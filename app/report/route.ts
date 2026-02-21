@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import sharp from "sharp";
 import { openDb } from "../db";
+import * as fs from "node:fs";
 
 type LostItemPayload = {
   name: string;
@@ -59,8 +60,10 @@ export async function POST(request: Request) {
       const webp = sharp(Buffer.from(buffer)).webp({ quality: 80 });
 
       const hash = require("crypto").createHash("sha256").update(await webp.toBuffer()).digest("hex");
-      await webp.toFile(`./data/img/${hash}.webp`);
-      picture = `${hash}`;
+      if (!fs.existsSync(`./data/img/${hash}.webp`)) {
+        await webp.toFile(`./data/img/${hash}.webp`);
+      }
+      picture = hash;
     } catch (error) {
       console.error("[report] Failed to convert image to WebP:", error);
       return NextResponse.json(
@@ -106,7 +109,7 @@ export async function POST(request: Request) {
   console.log("[report] Lost item payload:", payload);
   const db = await openDb();
   await db.run(
-    `INSERT INTO items (name, desc, tags, location, lat, lng, picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO items (name, desc, tags, location, lat, lng, picture, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     payload.name,
     payload.desc,
     JSON.stringify(payload.tags),
