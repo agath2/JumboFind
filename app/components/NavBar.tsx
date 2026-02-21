@@ -6,22 +6,25 @@ export default function Navbar() {
   return (
     <nav className="bg-dark-navy text-light-beige shadow-lg">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-22">
           {/* Logo/Brand */}
-          <Link href="/" className="text-2xl font-heading font-bold hover:opacity-80 transition">
+          <Link href="/" className="text-3xl font-heading font-bold hover:opacity-80 transition">
             JumboFind
           </Link>
 
           {/* Nav Links */}
-          <div className="flex gap-6 font-body">
+          <div className="flex gap-9 font-body text-lg">
             <Link href="/" className="hover:opacity-80 transition">
-              Map
+              Hub
             </Link>
             <Link href="/overview" className="hover:opacity-80 transition">
-              Overview
+              Map
             </Link>
-            <Link href="/report" className="hover:opacity-80 transition">
-              Report Item
+            <Link href="/lostfeed" className="hover:opacity-80 transition">
+              Search Item
+            </Link>
+            <Link href="/reportitem" className="hover:opacity-80 transition">
+              Found Item
             </Link>
           </div>
         </div>
