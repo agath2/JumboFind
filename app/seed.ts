@@ -27,10 +27,21 @@ async function setup() {
   await db.exec(`
     CREATE TABLE IF NOT EXISTS locations (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL
+      name TEXT NOT NULL,
+      address TEXT NOT NULL,
+      lat REAL NOT NULL,
+      lng REAL NOT NULL
     )
     `)
+
   // TODO POPULATE LOCATION TABLE
+  let locations = ["tisch", ]
+
+  await db.run(`
+    INSERT INTO locations
+    VALUES ${locations}
+    `
+  )
   await db.exec(`
   CREATE TABLE IF NOT EXISTS locations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import {openDb} from "../db";
-import {LostItem} from "../item";
+import {LostItem} from "../models/item";
 
 export async function GET(request: Request) {
     const url = new URL(request.url);
