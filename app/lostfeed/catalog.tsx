@@ -1,3 +1,5 @@
+// This page shows a complete catalog of all lost items
+
 import Link from "next/link";
 
 type Item = {

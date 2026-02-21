@@ -10,14 +10,14 @@ export default function Home() {
 
         <div className="space-y-4">
           <Link
-            href="/filter"
+            href="/lostfeed"
             className="block w-full rounded-lg bg-[#3E5E8C] px-6 py-4 text-lg font-medium text-white transition hover:bg-[#2f486b]"
           >
             Lost
           </Link>
 
           <Link
-            href="/lost"
+            href="/reportitem"
             className="block w-full rounded-lg bg-[#3E5E8C] px-6 py-4 text-lg font-medium text-white transition hover:bg-[#2f486b]"
           >
             Found
