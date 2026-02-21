@@ -1,5 +1,6 @@
 import {NextResponse} from "next/server";
 import {openDb} from "../db";
+import {LostItem} from "../item";
 
 export async function GET(request: Request) {
     const url = new URL(request.url);
@@ -51,11 +52,17 @@ export async function GET(request: Request) {
 
     const rows = await db.all(sql, params);
     await db.close();
+    const items: LostItem[] = rows.map((row) => {
+        return {
+            ...row,
+            tags: JSON.parse(row.tags)
+        }
+    });
     console.log("[report] Searched for lost items");
 
     return NextResponse.json({
         ok: true,
         msg: "Search results.",
-        data: rows
+        data: items
     });
 }
