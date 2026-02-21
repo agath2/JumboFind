@@ -6,7 +6,7 @@ import Link from "next/link";
 type LostItem = {
   id: number;
   title: string;
-  description?: string; // The '?' tells TypeScript this field might be missing, which is okay!
+  description?: string; // The '?' tells TypeScript this field might be missing
   location: string;
   category: string;
   isFound: boolean;
@@ -15,11 +15,11 @@ type LostItem = {
 };
 
 // Mock Data with YYYY-MM-DD format
-const MOCK_ITEMS = [
-  { id: 1, title: "Tufts ID Card", location: "tisch", category: "id", isFound: false, date: "2026-02-20", imageUrl: "https://via.placeholder.com/400x200?text=Tufts+ID+Card" },
-  { id: 2, title: "Black Water Bottle", location: "dewick", category: "other", isFound: true, date: "2026-02-19", imageUrl: "https://via.placeholder.com/400x200?text=Water+Bottle" },
-  { id: 3, title: "AirPods Case", location: "halligan", category: "electronics", isFound: false, date: "2026-02-21", imageUrl: "https://via.placeholder.com/400x200?text=AirPods+Case" },
-  { id: 4, title: "Grey Scarf", location: "campus", category: "clothing", isFound: false, date: "2026-02-18", imageUrl: "https://via.placeholder.com/400x200?text=Grey+Scarf" },
+const MOCK_ITEMS: LostItem[] = [
+  { id: 1, title: "Tufts ID Card", description: "Blue Tufts ID card", location: "tisch", category: "id", isFound: false, date: "2026-02-20", imageUrl: "https://via.placeholder.com/400x200?text=Tufts+ID+Card" },
+  { id: 2, title: "Black Water Bottle", description: "Hydro Flask water bottle", location: "dewick", category: "other", isFound: true, date: "2026-02-19", imageUrl: "https://via.placeholder.com/400x200?text=Water+Bottle" },
+  { id: 3, title: "AirPods Case", description: "White AirPods Pro case", location: "halligan", category: "electronics", isFound: false, date: "2026-02-21", imageUrl: "https://via.placeholder.com/400x200?text=AirPods+Case" },
+  { id: 4, title: "Grey Scarf", description: "Wool winter scarf", location: "campus", category: "clothing", isFound: false, date: "2026-02-18", imageUrl: "https://via.placeholder.com/400x200?text=Grey+Scarf" },
 ];
 
 export default function LostFeedPage() {
