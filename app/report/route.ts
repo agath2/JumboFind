@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import sharp from "sharp";
 import { openDb } from "../db";
 import * as fs from "node:fs";
+import { createHash } from "node:crypto";
 
 type LostItemPayload = {
   name: string;
@@ -59,7 +60,9 @@ export async function POST(request: Request) {
       const buffer = await file.arrayBuffer();
       const webp = sharp(Buffer.from(buffer)).webp({ quality: 80 });
 
-      const hash = require("crypto").createHash("sha256").update(await webp.toBuffer()).digest("hex");
+      const hash = createHash("sha256")
+        .update(await webp.toBuffer())
+        .digest("hex");
       if (!fs.existsSync(`./data/img/${hash}.webp`)) {
         await webp.toFile(`./data/img/${hash}.webp`);
       }
