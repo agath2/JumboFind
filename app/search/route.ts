@@ -17,18 +17,23 @@ export async function GET(request: Request) {
         date: url.searchParams.get("date") || undefined,
         location: url.searchParams.get("location") || undefined,
         tags: url.searchParams.getAll("tags") || undefined,
-        found: false
+        found: url.searchParams.get("found") ? url.searchParams.get("found") === "true" : undefined
     };
+
+    console.log("[report] Received search request with parameters:", search_params);
 
     const db = await openDb();
 
     // Base query
-    let sql = `SELECT *
-               FROM items
-               WHERE found = ?`;
-    const params: any[] = [search_params.found];
+    let sql = `SELECT * FROM items`;
+    const params = [];
 
     // Dynamically add filters
+    if (search_params.found !== undefined) {
+        sql += ` WHERE found = ?`;
+        params.push(search_params.found ? 1 : 0);
+    }
+
     if (search_params.name) {
         sql += ` AND name LIKE ?`;
         params.push(`%${search_params.name}%`);
