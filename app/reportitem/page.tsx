@@ -180,8 +180,8 @@ const handleSubmit = async (e: React.FormEvent) => {
             <button
               type="button"
               onClick={handleAIAnalyze}
-              disabled={!formData.picture || isAnalyzing}
-              className="w-full px-4 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold rounded-lg hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-2 shadow-md"
+              disabled={isAnalyzing}
+              className="w-full cursor-pointer px-4 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg active:translate-y-0 active:scale-100 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100 disabled:hover:shadow-md flex items-center justify-center gap-2 shadow-md"
             >
               {isAnalyzing ? "✨ Processing Image & GPS..." : "✨ Auto-Fill Details & Location"}
             </button>
@@ -252,7 +252,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
 
           <div className="space-y-4 pt-2">
-            <label className="block text-sm font-bold text-dark-navy">Contact Information (At least one required)</label>
+            <label className="block text-sm font-bold text-dark-navy">Contact Information (Optional)</label>
             <div>
               <label className="block text-xs text-gray-600 mb-1">Phone</label>
               <input type="tel" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-navy focus:border-transparent" placeholder="(123) 456-7890" />
