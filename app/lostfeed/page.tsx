@@ -12,13 +12,21 @@ type LostItem = {
   isFound: boolean;
   date: string;
   imageUrl: string;
+  contactInfo?: string;
+};
+
+const LOCATION_LABELS: Record<string, string> = {
+  tisch: "Tisch Library",
+  dewick: "Dewick Dining",
+  halligan: "Halligan Hall",
+  campus: "Campus Center",
 };
 
 // Mock Data with YYYY-MM-DD format
 const MOCK_ITEMS: LostItem[] = [
-  { id: 1, title: "Tufts ID Card", description: "Blue Tufts ID card", location: "tisch", category: "id", isFound: false, date: "2026-02-20", imageUrl: "https://via.placeholder.com/400x200?text=Tufts+ID+Card" },
+  { id: 1, title: "Tufts ID Card", description: "Blue Tufts ID card", location: "tisch", category: "id", isFound: false, date: "2026-02-20", imageUrl: "https://via.placeholder.com/400x200?text=Tufts+ID+Card", contactInfo: "maria.lee@tufts.edu" },
   { id: 2, title: "Black Water Bottle", description: "Hydro Flask water bottle", location: "dewick", category: "other", isFound: true, date: "2026-02-19", imageUrl: "https://via.placeholder.com/400x200?text=Water+Bottle" },
-  { id: 3, title: "AirPods Case", description: "White AirPods Pro case", location: "halligan", category: "electronics", isFound: false, date: "2026-02-21", imageUrl: "https://via.placeholder.com/400x200?text=AirPods+Case" },
+  { id: 3, title: "AirPods Case", description: "White AirPods Pro case", location: "halligan", category: "electronics", isFound: false, date: "2026-02-21", imageUrl: "https://via.placeholder.com/400x200?text=AirPods+Case", contactInfo: "(617) 555-0182" },
   { id: 4, title: "Grey Scarf", description: "Wool winter scarf", location: "campus", category: "clothing", isFound: false, date: "2026-02-18", imageUrl: "https://via.placeholder.com/400x200?text=Grey+Scarf" },
 ];
 
@@ -27,6 +35,7 @@ export default function LostFeedPage() {
   // UI State
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false); // Controls the Fold/Unfold
+  const [selectedItem, setSelectedItem] = useState<LostItem | null>(null);
   
   // Filter State
   const [locationFilter, setLocationFilter] = useState("all");
@@ -75,6 +84,8 @@ export default function LostFeedPage() {
     const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' };
     return new Date(`${dateString}T12:00:00`).toLocaleDateString('en-US', options);
   };
+
+  const formatLocation = (locationCode: string) => LOCATION_LABELS[locationCode] || locationCode;
 
   return (
     <div className="min-h-screen bg-[#f4f6f8] text-[#222]">
@@ -155,10 +166,14 @@ export default function LostFeedPage() {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredAndSortedItems.map((item) => (
-              <article
+              <button
                 key={item.id}
-                className={`overflow-hidden rounded-xl border-l-8 bg-white shadow-sm transition-all ${
-                  item.isFound ? "border-red-500 opacity-60" : "border-green-500"
+                type="button"
+                onClick={() => setSelectedItem(item)}
+                className={`cursor-pointer overflow-hidden rounded-xl border-l-8 bg-white shadow-sm transition-all ${
+                  item.isFound
+                    ? "border-red-500 opacity-60"
+                    : "border-green-500 hover:-translate-y-0.5 hover:shadow-md"
                 }`}
               >
                 <img src={item.imageUrl} alt={item.title} className="h-[160px] w-full object-cover bg-gray-100" />
@@ -171,15 +186,62 @@ export default function LostFeedPage() {
                       {item.isFound ? "Claimed" : "Active"}
                     </span>
                   </div>
-                  <p className="text-sm text-[#444] mb-1"><span className="font-bold capitalize">Where:</span> {item.location}</p>
+                  <p className="text-sm text-[#444] mb-1"><span className="font-bold capitalize">Where:</span> {formatLocation(item.location)}</p>
                   <p className="text-sm text-[#444]"><span className="font-bold">Date:</span> {formatDate(item.date)}</p>
                 </div>
-              </article>
+              </button>
             ))}
           </div>
         )}
 
       </main>
+
+      {selectedItem && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
+          onClick={() => setSelectedItem(null)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-3 flex items-start justify-between">
+              <h2 className="pr-3 text-xl font-bold text-[#1f3552]">{selectedItem.title}</h2>
+              <button
+                type="button"
+                onClick={() => setSelectedItem(null)}
+                className="cursor-pointer rounded-md px-2 py-1 text-sm font-semibold text-[#3E5E8C] hover:bg-[#eef5ff]"
+              >
+                ✕
+              </button>
+            </div>
+
+            <img src={selectedItem.imageUrl} alt={selectedItem.title} className="mb-4 h-44 w-full rounded-lg object-cover bg-gray-100" />
+
+            <div className="space-y-2 text-sm text-[#334]">
+              <p><span className="font-bold">Where:</span> {formatLocation(selectedItem.location)}</p>
+              <p><span className="font-bold">When:</span> {formatDate(selectedItem.date)}</p>
+              <p>
+                <span className="font-bold">Contact:</span>{" "}
+                {selectedItem.contactInfo || "Not provided by finder."}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              disabled={selectedItem.isFound}
+              onClick={() => alert("Marked! We will connect you with the finder soon.")}
+              className={`mt-5 w-full rounded-lg px-4 py-3 text-sm font-bold text-white transition ${
+                selectedItem.isFound
+                  ? "cursor-not-allowed bg-gray-400"
+                  : "cursor-pointer bg-[#3E5E8C] hover:bg-[#2f486b]"
+              }`}
+            >
+              {selectedItem.isFound ? "Already Claimed" : "I found it"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
