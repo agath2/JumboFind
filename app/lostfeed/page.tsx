@@ -82,17 +82,7 @@ export default function LostFeedPage() {
   const formatLocation = (locationCode: string) => LOCATION_LABELS[locationCode] || locationCode;
 
   return (
-    <div className="min-h-screen bg-[#f4f6f8] text-[#222]">
-      
-      {/* Header */}
-      <header className="bg-white border-b border-[#e6e6e6] px-4 py-4 sticky top-0 z-40">
-        <div className="max-w-5xl mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold text-[#3E5E8C]">Tufts JumboFind Feed</h1>
-          <Link href="/" className="text-sm font-semibold text-[#3E5E8C] border border-[#d8e0ee] px-3 py-2 rounded-lg hover:bg-[#eef5ff]">
-            ← Home
-          </Link>
-        </div>
-      </header>
+    <div className="mt-22 min-h-screen bg-[#f4f6f8] text-[#222]">
 
       <main className="max-w-5xl mx-auto px-4 py-6">
         
@@ -104,11 +94,11 @@ export default function LostFeedPage() {
               placeholder="Search lost items..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-grow rounded-lg border border-[#e8e8e8] p-4 focus:border-[#3E5E8C] focus:outline-none focus:ring-1 focus:ring-[#3E5E8C]"
+              className="bg-white shadow-sm mt-3 flex-grow rounded-lg border border-[#e8e8e8] p-4 focus:border-[#3E5E8C] focus:outline-none focus:ring-1 focus:ring-[#3E5E8C]"
             />
             <button 
               onClick={() => setShowFilters(!showFilters)}
-              className={`rounded-lg px-6 text-xl font-bold transition ${
+              className={`rounded-lg px-6 mt-3 text-2xl font-bold transition ${
                 showFilters ? "bg-[#2f486b] text-white" : "bg-[#3E5E8C] text-white hover:bg-[#2f486b]"
               }`}
             >
@@ -180,7 +170,7 @@ export default function LostFeedPage() {
                       {item.isFound ? "Claimed" : "Active"}
                     </span>
                   </div>
-                  <p className="text-sm text-[#444] mb-1"><span className="font-bold capitalize">Where:</span> {formatLocation(item.location)}</p>
+                  <p className="text-sm text-[#444] mb-1"><span className="font-bold capitalize">Found at:</span> {formatLocation(item.location)}</p>
                   <p className="text-sm text-[#444]"><span className="font-bold">Date:</span> {formatDate(item.date)}</p>
                 </div>
               </button>
@@ -231,7 +221,7 @@ export default function LostFeedPage() {
                   : "cursor-pointer bg-[#3E5E8C] hover:bg-[#2f486b]"
               }`}
             >
-              {selectedItem.isFound ? "Already Claimed" : "I found it"}
+              {selectedItem.isFound ? "Already Claimed" : "I retrieved it"}
             </button>
           </div>
         </div>
