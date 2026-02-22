@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 // Define the formal TypeScript contract
 type LostItem = {
@@ -40,17 +40,11 @@ export default function LostFeedPage() {
   // Filter State
   const [locationFilter, setLocationFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [data, setData] = useState([])
-  
-    // Do basic search on page load
-  useEffect(() => 
-    console.log("retrieving items")
 
-  )
-
-  const getData = (searchParams) => {
-    
-  }
+  // Do basic search on page load
+  useEffect(() => {
+    console.log("retrieving items");
+  }, []);
 
   // THE FULL DATA PIPELINE
   const filteredAndSortedItems = MOCK_ITEMS
