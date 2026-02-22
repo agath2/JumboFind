@@ -171,6 +171,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     dataToSend.append('desc', formData.description); // matches 'desc'
     dataToSend.append('tags', formData.tags.join(',')); // matches comma-separated string
     dataToSend.append('loc', formData.location);
+    dataToSend.append('lat', formData.lat.toString()); // matches 'lat'
     dataToSend.append('lng', formData.long.toString()); // matches 'lng'
     dataToSend.append('img', formData.picture); // matches 'img'
     
