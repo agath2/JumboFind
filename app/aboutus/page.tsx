@@ -78,9 +78,9 @@ export default function AboutUs() {
         <div>
           <h2 className="mb-5 font-heading text-2xl font-bold md:text-3xl">Our Team</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {TEAM_MEMBERS.map((member) => (
-              <article key={member.name} className="rounded-xl border border-dark-navy/15 bg-white p-5 shadow-sm">
-                <h3 className="font-heading text-xl font-semibold">{member.name}</h3>
+            {TEAM_MEMBERS.map((member, index) => (
+              <article key={`${member.name || "member"}-${index}`} className="rounded-xl border border-dark-navy/15 bg-white p-5 shadow-sm">
+                <h3 className="font-heading text-xl font-semibold">{member.name || "Team Member"}</h3>
                 <p className="mt-1 text-sm font-semibold text-dark-yellow">{member.role}</p>
                 <p className="mt-3 text-sm leading-7 text-dark-navy/85">{member.bio}</p>
               </article>
