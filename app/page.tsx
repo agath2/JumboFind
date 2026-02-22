@@ -10,8 +10,20 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex h-full items-center justify-center bg-[#f4f6f8] px-4 py-30">
-      <div className="w-full max-w-4xl">
+    <main className="relative flex h-full items-center justify-center px-4 py-30">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/images/tuftsmap.jpg"
+          alt="Background"
+          className="h-full w-full object-cover"
+        />
+        {/* Optional overlay for better contrast */}
+        <div className="absolute inset-0 bg-white/70" />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 w-full max-w-4xl">
         <h1 className="mt-10 mb-16 text-center text-5xl font-heading font-bold text-dark-navy">
           Tufts Lost and Found
         </h1>
