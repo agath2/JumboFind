@@ -252,7 +252,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
 
           <div className="space-y-4 pt-2">
-            <label className="block text-sm font-bold text-dark-navy">Contact Information (At least one required)</label>
+            <label className="block text-sm font-bold text-dark-navy">Contact Information (Optional)</label>
             <div>
               <label className="block text-xs text-gray-600 mb-1">Phone</label>
               <input type="tel" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-navy focus:border-transparent" placeholder="(123) 456-7890" />
