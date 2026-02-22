@@ -4,7 +4,6 @@
 import { analyzeImage } from '../actions/analyzeImage';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getTags } from '../actions/tags';
 
 export default function ReportItem() {
   const router = useRouter();
@@ -25,10 +24,47 @@ export default function ReportItem() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const [availableTags, setAvailableTags] = useState<string[]>([]);
-  useEffect(() => {
-    getTags().then(tags => setAvailableTags(tags));
-  }, []);
+  const [locations, setLocations] = useState<string[]>([]); 
 
+  const fetchTags = async (): Promise<string[]> => {
+  try {
+    const res = await fetch('/tags');
+    const data = await res.json();
+    // Extract only the "name" field from each object
+    return data.data.map((item: any) => String(item.name));
+  } catch (error) {
+    console.error('Error fetching tags:', error);
+    return []; // return empty array on error
+  }
+};
+
+const fetchLocations = async (): Promise<string[]> => {
+  try {
+    const res = await fetch('/locations');
+    const data = await res.json();
+    // Extract only the "name" field from each object
+    return data.data.map((item: any) => String(item.name));
+  } catch (error) {
+    console.error('Error fetching locations:', error);
+    return []; // return empty array on error
+  }
+};
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const tags = await fetchTags(); 
+        setAvailableTags(tags);
+
+        const loc = await fetchLocations(); 
+        setLocations(loc);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData(); 
+  }, []); 
   const getLocation = () => {
     setLocationLoading(true);
     setLocationError('');
@@ -216,11 +252,11 @@ const handleSubmit = async (e: React.FormEvent) => {
               <label className="block text-sm font-bold mb-2 text-black">Campus Zone (For the Feed) *</label>
               <select value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-navy bg-white text-black" required>
                 <option value="" disabled>Select a building/zone...</option>
-                <option value="" disabled className="text-black">Select a building/zone...</option>
-                <option value="tisch">Tisch Library</option>
-                <option value="dewick">Dewick Dining</option>
-                <option value="halligan">Halligan Hall</option>
-                <option value="campus">Campus Center</option>
+                {locations.map((loc) => (
+                  <option key={loc} value={loc}>
+                    {loc}
+                  </option>
+                ))}
               </select>
             </div>
 
