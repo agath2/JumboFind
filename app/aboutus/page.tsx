@@ -10,7 +10,7 @@ const TEAM_GROUPS = [
         bio: "Builds smooth, accessible interfaces and keeps the user flow simple.",
       },
       {
-        name: "Betty",
+        name: "Betty Park",
         bio: "Focuses on responsive layouts and interaction polish across devices.",
       },
       {
