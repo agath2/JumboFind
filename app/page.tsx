@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="flex h-full items-center justify-center bg-[#f4f6f8] px-4">
+    <main className="flex min-h-screen items-center justify-center bg-[#f4f6f8] px-4">
       <div className="w-full max-w-md text-center">
         <h1 className="mb-10 text-4xl font-bold text-[#3E5E8C]">
           Tufts Lost and Found
