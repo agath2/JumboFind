@@ -10,6 +10,7 @@
     "seed": "tsx ./app/seed.ts"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@tailwindcss/cli": "^4.2.0",
     "mapbox-gl": "^3.18.1",
     "next": "16.1.6",
