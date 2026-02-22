@@ -2,8 +2,10 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function ReportItem() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -85,34 +87,62 @@ export default function ReportItem() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation
+    // Step 1: Validation
     if (!formData.name || !formData.description || formData.tags.length === 0) {
       alert('Please fill in all required fields');
       return;
     }
-
     if (formData.lat === 0 || formData.long === 0) {
       alert('Please get your current location');
       return;
     }
-
     if (!formData.picture) {
       alert('Please upload a picture of the item');
       return;
     }
-
     if (!formData.phone && !formData.email) {
       alert('Please provide at least one contact method (phone or email)');
       return;
     }
 
-    // TODO: Send data to backend
-    console.log('Form submitted:', formData);
-    alert('Item reported successfully!');
-  };
+    // Step 2: Package the data exactly to match the backend's expected keys
+    const dataToSend = new FormData();
+    dataToSend.append('name', formData.name);
+    dataToSend.append('desc', formData.description); // matches 'desc'
+    dataToSend.append('tags', formData.tags.join(',')); // matches comma-separated string
+    dataToSend.append('loc', `Lat: ${formData.lat.toFixed(4)}, Lng: ${formData.long.toFixed(4)}`); // placeholder string for 'loc'
+    dataToSend.append('lat', formData.lat.toString());
+    dataToSend.append('lng', formData.long.toString()); // matches 'lng'
+    dataToSend.append('img', formData.picture); // matches 'img'
+    
+    if (formData.phone) dataToSend.append('phoneNumber', formData.phone); // matches 'phoneNumber'
+    if (formData.email) dataToSend.append('email', formData.email);
+
+    // Step 3: Send data to the backend and handle the redirect
+    try {
+      // Send the POST request to the app/report/route.ts file
+      const response = await fetch('/report', {
+        method: 'POST',
+        body: dataToSend, 
+      });
+
+      if (response.ok) {
+        // Success! Redirect the user to the congratulations page
+        router.push('/reportsuccess');
+      } else {
+        // If the backend sends an error (e.g. 400 Bad Request)
+        const errorData = await response.json();
+        alert(`Error: ${errorData.msg || 'Failed to submit item'}`);
+      }
+    } catch (error) {
+      // If the network fails completely
+      console.error('Submission error:', error);
+      alert('An error occurred while submitting the form. Please try again.');
+    }
+};
 
   return (
     <div className="min-h-full bg-light-beige p-6 mt-22">
