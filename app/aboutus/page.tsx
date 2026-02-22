@@ -1,6 +1,5 @@
 // Team information
 import Link from "next/link";
-import InteractiveDotsBackground from "../components/InteractiveDotsBackground";
 
 const TEAM_GROUPS = [
   {
@@ -57,7 +56,6 @@ const VALUES = [
 export default function AboutUs() {
   return (
     <section className="relative min-h-full overflow-hidden bg-light-beige px-4 pb-14 pt-32 text-dark-navy">
-      <InteractiveDotsBackground />
       <div className="relative z-10 mx-auto w-full max-w-6xl">
         <div className="mb-12 rounded-2xl bg-dark-navy p-8 text-light-beige shadow-lg opacity-0 [animation:fadeInUp_700ms_ease-out_forwards] md:p-10">
           <p className="mb-3 text-sm uppercase tracking-[0.2em] opacity-80">About JumboFind</p>
