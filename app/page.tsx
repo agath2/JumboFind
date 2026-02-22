@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <main className="flex h-full items-center justify-center bg-[#f4f6f8] px-4 py-30">
       <div className="w-full max-w-4xl">
-        <h1 className="mt-8 mb-16 text-center text-5xl font-heading font-bold text-dark-navy">
+        <h1 className="mt-10 mb-16 text-center text-5xl font-heading font-bold text-dark-navy">
           Tufts Lost and Found
         </h1>
         
@@ -27,7 +27,7 @@ export default function Home() {
             {/* Background Image */}
             <div className="absolute inset-0 overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80"
+                src="https://images.unsplash.com/photo-1765000884289-baee6a441acd?w=800&q=80"
                 alt="Lost items"
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
@@ -62,7 +62,7 @@ export default function Home() {
             {/* Background Image */}
             <div className="absolute inset-0 overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1523289333742-be1143f6b766?w=800&q=80"
+                src="https://images.unsplash.com/photo-1668261584978-c800ae21b237?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="Found items"
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
