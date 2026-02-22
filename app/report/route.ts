@@ -75,8 +75,8 @@ export async function POST(request: Request) {
       lat: Number(formData.get("lat")),
       lng: Number(formData.get("lng")),
       picture,
-      phoneNumber: String(formData.get("phoneNumber")),
-      email: String(formData.get("email")),
+      phoneNumber: String(formData.get("phoneNumber") ?? ""),
+      email: String(formData.get("email") ?? ""),
     };
   } else {
     return NextResponse.json(
