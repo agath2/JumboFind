@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import {LostItem} from "../items";
+import {LostItem} from "../models/item";
 import getItems from "@/app/actions/getitems";
+import getImage from "@/app/actions/getImage";
 
 export default function LostFeedPage() {
   // UI State
@@ -23,31 +23,35 @@ export default function LostFeedPage() {
         items = items.filter((item) => {
             // 1. Keyword Match (Searches Title OR Description safely)
             const lowerQuery = searchQuery.toLowerCase();
-            const matchesTitle = item.title.toLowerCase().includes(lowerQuery);
+            const matchesTitle = item.name.toLowerCase().includes(lowerQuery);
 
             // We use the '?' operator to ensure the app doesn't crash if the backend sends an item with no description
-            const matchesDesc = item.description
-                ? item.description.toLowerCase().includes(lowerQuery)
+            const matchesDesc = item.desc
+                ? item.desc.toLowerCase().includes(lowerQuery)
                 : false;
 
             const matchesSearch = matchesTitle || matchesDesc;
             // 2. Location Match
             const matchesLocation = locationFilter === "all" || item.location === locationFilter;
             // 3. Category Match
-            const matchesCategory = categoryFilter === "all" || item.category === categoryFilter;
+            const matchesCategory = categoryFilter === "all" || categoryFilter in item.tags;
 
             return matchesSearch && matchesLocation && matchesCategory;
         })
             .sort((a, b) => {
                 // 4. Sort by Status (Active first, Claimed second)
-                if (a.isFound !== b.isFound) return a.isFound ? 1 : -1;
+                if (a.found !== b.found) return a.found ? 1 : -1;
                 // 5. Sort by Date (Newest first, relies on YYYY-MM-DD)
                 return b.date.localeCompare(a.date);
             });
-
         setItems(items);
     });
   }, []);
+
+    const [images, setImages] = useState(new Map<number, string>());
+    useEffect(() => {
+        Promise.all(items.map(async (item) => [item.id, await getImage(item.picture)] as const)).then(images => setImages(new Map(images)));
+    });
 
   // Date Formatter
   const formatDate = (dateString: string) => {
@@ -129,22 +133,22 @@ export default function LostFeedPage() {
                 type="button"
                 onClick={() => setSelectedItem(item)}
                 className={`cursor-pointer overflow-hidden rounded-xl border-l-8 bg-white shadow-sm transition-all ${
-                  item.isFound
+                  item.found
                     ? "border-red-500 opacity-60"
                     : "border-green-500 hover:-translate-y-0.5 hover:shadow-md"
                 }`}
               >
-                <img src={item.imageUrl} alt={item.title} className="h-[160px] w-full object-cover bg-gray-100" />
+                <img src={images.get(item.id)} alt={item.name} className="h-[160px] w-full object-cover bg-gray-100" />
                 <div className="p-4">
                   <div className="flex justify-between items-start mb-2">
-                    <h2 className="text-lg font-bold truncate pr-2">{item.title}</h2>
+                    <h2 className="text-lg font-bold truncate pr-2">{item.name}</h2>
                     <span className={`text-xs font-bold px-2 py-1 rounded-full whitespace-nowrap ${
-                      item.isFound ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
+                      item.found ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
                     }`}>
-                      {item.isFound ? "Claimed" : "Active"}
+                      {item.found ? "Claimed" : "Active"}
                     </span>
                   </div>
-                  <p className="text-sm text-[#444] mb-1"><span className="font-bold capitalize">Found at:</span> {formatLocation(item.location)}</p>
+                  <p className="text-sm text-[#444] mb-1"><span className="font-bold capitalize">Found at:</span> {item.location}</p>
                   <p className="text-sm text-[#444]"><span className="font-bold">Date:</span> {formatDate(item.date)}</p>
                 </div>
               </button>
@@ -164,7 +168,7 @@ export default function LostFeedPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-3 flex items-start justify-between">
-              <h2 className="pr-3 text-xl font-bold text-[#1f3552]">{selectedItem.title}</h2>
+              <h2 className="pr-3 text-xl font-bold text-[#1f3552]">{selectedItem.name}</h2>
               <button
                 type="button"
                 onClick={() => setSelectedItem(null)}
@@ -174,28 +178,28 @@ export default function LostFeedPage() {
               </button>
             </div>
 
-            <img src={selectedItem.imageUrl} alt={selectedItem.title} className="mb-4 h-44 w-full rounded-lg object-cover bg-gray-100" />
+            <img src={selectedItem.picture} alt={selectedItem.name} className="mb-4 h-44 w-full rounded-lg object-cover bg-gray-100" />
 
             <div className="space-y-2 text-sm text-[#334]">
               <p><span className="font-bold">Where:</span> {selectedItem.location}</p>
               <p><span className="font-bold">When:</span> {formatDate(selectedItem.date)}</p>
               <p>
                 <span className="font-bold">Contact:</span>{" "}
-                {selectedItem.contactInfo || "Not provided by finder."}
+                {selectedItem.email || selectedItem.phone || "Not provided by finder."}
               </p>
             </div>
 
             <button
               type="button"
-              disabled={selectedItem.isFound}
+              disabled={selectedItem.found}
               onClick={() => alert("Marked! We will connect you with the finder soon.")}
               className={`mt-5 w-full rounded-lg px-4 py-3 text-sm font-bold text-white transition ${
-                selectedItem.isFound
+                selectedItem.found
                   ? "cursor-not-allowed bg-gray-400"
                   : "cursor-pointer bg-[#3E5E8C] hover:bg-[#2f486b]"
               }`}
             >
-              {selectedItem.isFound ? "Already Claimed" : "I retrieved it"}
+              {selectedItem.found ? "Already Claimed" : "I retrieved it"}
             </button>
           </div>
         </div>

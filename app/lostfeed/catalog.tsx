@@ -1,76 +1,28 @@
 // This page shows a complete catalog of all lost items
 
 import Link from "next/link";
+import {LostItem} from "../models/item";
+import getItems from "@/app/actions/getitems";
+import getImage from "@/app/actions/getImage";
 
-type Item = {
-  title: string;
-  where: string;
-  when: string;
-  imageUrl: string;
-  imageAlt: string;
-  location: string;
-  category: string;
-};
-
-const ITEMS: Item[] = [
-  {
-    title: "Tufts ID Card",
-    where: "Tisch Library (1st floor)",
-    when: "Feb 20, 2026 • 3:15 PM",
-    imageUrl: "https://via.placeholder.com/800x500?text=Tufts+ID+Card",
-    imageAlt: "Tufts ID Card",
-    location: "tisch",
-    category: "id",
-  },
-  {
-    title: "Black Water Bottle",
-    where: "Dewick Dining",
-    when: "Feb 19, 2026 • 12:40 PM",
-    imageUrl: "https://via.placeholder.com/800x500?text=Black+Water+Bottle",
-    imageAlt: "Black water bottle",
-    location: "dewick",
-    category: "other",
-  },
-  {
-    title: "AirPods Case",
-    where: "Halligan Hall",
-    when: "Feb 18, 2026 • 6:05 PM",
-    imageUrl: "https://via.placeholder.com/800x500?text=AirPods+Case",
-    imageAlt: "AirPods case",
-    location: "halligan",
-    category: "electronics",
-  },
-  {
-    title: "Grey Scarf",
-    where: "Campus Center",
-    when: "Feb 17, 2026 • 9:20 AM",
-    imageUrl: "https://via.placeholder.com/800x500?text=Grey+Scarf",
-    imageAlt: "Grey scarf",
-    location: "campus",
-    category: "clothing",
-  },
-];
-
-export default async function LostPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ location?: string; category?: string }>;
-}) {
+export default async function LostPage(searchParams: Promise<{ location?: string; category?: string }>) {
   const params = await searchParams;
   const locationFilter = params.location ?? "all";
   const categoryFilter = params.category ?? "all";
 
-  const filteredItems = ITEMS.filter((item) => {
+  let items: LostItem[] = (await getItems()).filter((item) => {
     if (locationFilter !== "all" && item.location !== locationFilter) {
       return false;
     }
 
-    if (categoryFilter !== "all" && item.category !== categoryFilter) {
+    if (categoryFilter !== "all" && categoryFilter !in item.tags) {
       return false;
     }
 
     return true;
   });
+
+  const images = new Map(await Promise.all(items.map(async (item) => [item.id, await getImage(item.picture)] as const)));
 
   return (
     <div className="min-h-screen bg-[#f4f6f8] text-[#222]">
@@ -91,25 +43,25 @@ export default async function LostPage({
           These are items people reported as <b>found</b>. If one is yours, contact the finder (feature coming next).
         </p>
 
-        {filteredItems.length === 0 ? (
+        {items.length === 0 ? (
           <div className="rounded-xl border border-[#e8e8e8] bg-white p-6 text-sm text-[#444]">
             No items match your filters. Try changing location/category.
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredItems.map((item) => (
+            {items.map((item) => (
               <article
-                key={`${item.title}-${item.when}`}
+                key={`${item.name}-${item.date}`}
                 className="overflow-hidden rounded-xl border border-[#e8e8e8] bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
               >
-                <img src={item.imageUrl} alt={item.imageAlt} className="block h-[170px] w-full bg-[#eaeaea] object-cover" />
+                <img src={images.get(item.id)} alt={item.desc} className="block h-[170px] w-full bg-[#eaeaea] object-cover" />
                 <div className="p-3">
-                  <h2 className="mb-2 text-base font-bold">{item.title}</h2>
+                  <h2 className="mb-2 text-base font-bold">{item.name}</h2>
                   <p className="text-sm leading-6 text-[#444]">
-                    <span className="font-bold text-[#333]">Where:</span> {item.where}
+                    <span className="font-bold text-[#333]">Where:</span> {item.location}
                   </p>
                   <p className="text-sm leading-6 text-[#444]">
-                    <span className="font-bold text-[#333]">When:</span> {item.when}
+                    <span className="font-bold text-[#333]">When:</span> {item.date}
                   </p>
                 </div>
               </article>
