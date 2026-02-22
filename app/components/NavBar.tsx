@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export default function Navbar() {
   return (
-    <nav className="bg-dark-navy text-light-beige shadow-lg">
+    <nav className="fixed top-0 w-full bg-dark-navy text-light-beige shadow-lg z-50">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-22">
           {/* Logo/Brand */}
@@ -25,6 +25,9 @@ export default function Navbar() {
             </Link>
             <Link href="/reportitem" className="hover:opacity-80 transition">
               Found Item
+            </Link>
+            <Link href="/aboutus" className="hover:opacity-80 transition">
+              About Us
             </Link>
           </div>
         </div>

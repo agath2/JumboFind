@@ -5,13 +5,6 @@ import * as fs from "node:fs";
 import { createHash } from "node:crypto";
 import { LostItem } from "../models/item";
 
-function splitTags(input: FormDataEntryValue | null): string[] {
-  if (!input) return [];
-  return String(input)
-    .split(",")
-    .map((tag) => tag.trim())
-    .filter(Boolean);
-}
 
 export async function POST(request: Request) {
   const contentType = request.headers.get("content-type") ?? "";
@@ -70,7 +63,7 @@ export async function POST(request: Request) {
     payload = {
       name: String(formData.get("name")),
       desc: String(formData.get("desc")),
-      tags: splitTags(formData.get("tags")),
+      tags: formData.getAll("tags") as string[],
       location: String(formData.get("loc")),
       lat: Number(formData.get("lat")),
       lng: Number(formData.get("lng")),

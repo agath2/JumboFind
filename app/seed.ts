@@ -1,4 +1,5 @@
 import { openDb } from "@/app/db";
+import {tags} from "@/app/models/tags"
 import * as fs from "node:fs";
 
 async function setup() {
@@ -33,6 +34,7 @@ async function setup() {
       lng REAL NOT NULL
     )
   `)
+  // Populate Locations
   let locraw: any[] = JSON.parse(fs.readFileSync("./app/models/medford-locations.json").toString()).maps[0].locations;
 
     let locations = locraw.map((loc: any) => {
@@ -43,7 +45,7 @@ async function setup() {
             lng: loc.longitude
         }
     })
-    const placeholders = locations.map(() => "(?, ?, ?, ?)").join(", ");
+    const loc_placeholders = locations.map(() => "(?, ?, ?, ?)").join(", ");
     const values = locations.flatMap((loc) => [
         loc.name,
         loc.address,
@@ -53,17 +55,23 @@ async function setup() {
 
     await db.run(
         `INSERT INTO locations (name, address, lat, lng)
-         VALUES ${placeholders}`,
+         VALUES ${loc_placeholders}`,
         values
     );
 
   await db.exec(`
-  CREATE TABLE IF NOT EXISTS locations (
+  CREATE TABLE IF NOT EXISTS tags (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL
   )
   `)
-  // TODO POPULATE TAGS
+
+  const tags_placeholders = tags.map(() => "(?)").join(", ");
+  await db.run(
+    `INSERT INTO tags (name)
+    VALUES ${tags_placeholders}`,
+    tags
+  )
 
   console.log("Database setup complete.");
   await db.close();
