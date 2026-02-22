@@ -126,12 +126,6 @@ export default function LostFeedPage() {
     }
   };
 
-
-  // Date Formatter
-  // const formatDate = (dateString: string) => {
-  //   const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' };
-  //   return new Date(`${dateString}T12:00:00`).toLocaleDateString('en-US', options);
-  // };
     function n(s: string | undefined) { return s === 'null' ? null : s }
 
   return (

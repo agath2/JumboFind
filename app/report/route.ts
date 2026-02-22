@@ -9,7 +9,7 @@ import { LostItem } from "../models/item";
 export async function POST(request: Request) {
   const contentType = request.headers.get("content-type") ?? "";
 
-  let payload: LostItem;
+  let payload: any;
 
   if (contentType.includes("multipart/form-data")) {
     const formData = await request.formData();
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     let picture: string;
     try {
       const buffer = await file.arrayBuffer();
-      const webp = sharp(Buffer.from(buffer)).webp({ quality: 80 });
+      const webp = sharp(Buffer.from(buffer)).webp({ quality: 80 }).rotate(90); // idk why but it needs to be rotated 90 degrees
 
       let hash = createHash("sha256")
         .update(await webp.toBuffer())
