@@ -56,7 +56,7 @@ const MapboxExample = ({ items }: MapboxExampleProps) => {
     return () => {
       mapRef.current?.remove();
     };
-  }, []);
+  }, [items]);
 
   return <div ref={mapContainerRef} style={{ height: '100%' }}></div>;
 };
