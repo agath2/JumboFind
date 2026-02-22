@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {LostItem} from "../items";
-import {openDb} from "@/app/db";
-
+import getItems from "@/app/actions/getitems";
 
 export default function LostFeedPage() {
   // UI State
@@ -20,42 +19,35 @@ export default function LostFeedPage() {
 
   // Do basic search on page load
   useEffect(() => {
-    const getItems = async function() {
-      const db = await openDb();
-      const rows = await db.all(`SELECT * FROM items`);
-      await db.close();
-      return rows;
-    }
+      getItems().then(items => {
+        items = items.filter((item) => {
+            // 1. Keyword Match (Searches Title OR Description safely)
+            const lowerQuery = searchQuery.toLowerCase();
+            const matchesTitle = item.title.toLowerCase().includes(lowerQuery);
 
-    getItems().then(setItems);
-  }, []);
+            // We use the '?' operator to ensure the app doesn't crash if the backend sends an item with no description
+            const matchesDesc = item.description
+                ? item.description.toLowerCase().includes(lowerQuery)
+                : false;
 
-  // THE FULL DATA PIPELINE
-  const filteredAndSortedItems = items
-    .filter((item) => {
-      // 1. Keyword Match (Searches Title OR Description safely)
-      const lowerQuery = searchQuery.toLowerCase();
-      const matchesTitle = item.title.toLowerCase().includes(lowerQuery);
-      
-      // We use the '?' operator to ensure the app doesn't crash if the backend sends an item with no description
-      const matchesDesc = item.description 
-        ? item.description.toLowerCase().includes(lowerQuery) 
-        : false;
-        
-      const matchesSearch = matchesTitle || matchesDesc;
-      // 2. Location Match
-      const matchesLocation = locationFilter === "all" || item.location === locationFilter;
-      // 3. Category Match
-      const matchesCategory = categoryFilter === "all" || item.category === categoryFilter;
-      
-      return matchesSearch && matchesLocation && matchesCategory;
-    })
-    .sort((a, b) => {
-      // 4. Sort by Status (Active first, Claimed second)
-      if (a.isFound !== b.isFound) return a.isFound ? 1 : -1;
-      // 5. Sort by Date (Newest first, relies on YYYY-MM-DD)
-      return b.date.localeCompare(a.date);
+            const matchesSearch = matchesTitle || matchesDesc;
+            // 2. Location Match
+            const matchesLocation = locationFilter === "all" || item.location === locationFilter;
+            // 3. Category Match
+            const matchesCategory = categoryFilter === "all" || item.category === categoryFilter;
+
+            return matchesSearch && matchesLocation && matchesCategory;
+        })
+            .sort((a, b) => {
+                // 4. Sort by Status (Active first, Claimed second)
+                if (a.isFound !== b.isFound) return a.isFound ? 1 : -1;
+                // 5. Sort by Date (Newest first, relies on YYYY-MM-DD)
+                return b.date.localeCompare(a.date);
+            });
+
+        setItems(items);
     });
+  }, []);
 
   // Date Formatter
   const formatDate = (dateString: string) => {
@@ -134,14 +126,14 @@ export default function LostFeedPage() {
         </div>
 
         {/* The Grid */}
-        {filteredAndSortedItems.length === 0 ? (
+        {items.length === 0 ? (
           <div className="rounded-xl border border-[#e8e8e8] bg-white p-8 text-center text-[#555]">
             <p className="font-bold text-lg mb-2">No items found</p>
             <p className="text-sm">Try adjusting your search or filters.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredAndSortedItems.map((item) => (
+            {items.map((item) => (
               <button
                 key={item.id}
                 type="button"
