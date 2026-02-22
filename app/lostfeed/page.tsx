@@ -4,21 +4,39 @@ import { useEffect, useState } from "react";
 import {LostItem} from "../models/item";
 import getItems from "@/app/actions/getitems";
 import getImage from "@/app/actions/getImage";
+import {getTags} from "@/app/actions/tags";
 
 export default function LostFeedPage() {
   // UI State
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false); // Controls the Fold/Unfold
   const [selectedItem, setSelectedItem] = useState<LostItem | null>(null);
-  
+
   // Filter State
   const [locationFilter, setLocationFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
   const [items, setItems] = useState<LostItem[]>([]);
+  const [tags, setTags] = useState<string[]>([])
+
+    const fetchLocations = async (): Promise<string[]> => {
+        try {
+            const res = await fetch('/locations');
+            const data = await res.json();
+            // Extract only the "name" field from each object
+            return data.data.map((item: any) => String(item.name));
+        } catch (error) {
+            console.error('Error fetching locations:', error);
+            return []; // return empty array on error
+        }
+    };
+
+    const [locations, setLocations] = useState<string[]>([]);
 
   // Do basic search on page load
   useEffect(() => {
+      fetchLocations().then(locs => setLocations(locs));
+      getTags().then(tags => setTags(tags));
       getItems().then(items => {
         items = items.filter((item) => {
             // 1. Keyword Match (Searches Title OR Description safely)
@@ -63,7 +81,7 @@ export default function LostFeedPage() {
     <div className="mt-22 min-h-screen bg-[#f4f6f8] text-[#222]">
 
       <main className="max-w-5xl mx-auto px-4 py-6">
-        
+
         {/* Search & Filter Controls */}
         <div className="mb-8">
           <div className="flex w-full gap-2 mb-2">
@@ -74,7 +92,7 @@ export default function LostFeedPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="bg-white shadow-sm mt-3 flex-grow rounded-lg border border-[#e8e8e8] p-4 focus:border-[#3E5E8C] focus:outline-none focus:ring-1 focus:ring-[#3E5E8C]"
             />
-            <button 
+            <button
               onClick={() => setShowFilters(!showFilters)}
               className={`rounded-lg px-6 mt-3 text-2xl font-bold transition ${
                 showFilters ? "bg-[#2f486b] text-white" : "bg-[#3E5E8C] text-white hover:bg-[#2f486b]"
@@ -89,30 +107,30 @@ export default function LostFeedPage() {
             <div className="bg-white p-4 rounded-lg border border-[#e8e8e8] shadow-sm flex flex-col sm:flex-row gap-4 animate-in slide-in-from-top-2">
               <div className="flex-1">
                 <label className="block text-sm font-bold text-[#555] mb-1">Location</label>
-                <select 
-                  value={locationFilter} 
+                <select
+                  value={locationFilter}
                   onChange={(e) => setLocationFilter(e.target.value)}
                   className="w-full p-2 border border-[#e8e8e8] rounded bg-gray-50 focus:outline-none focus:border-[#3E5E8C]"
                 >
                   <option value="all">Anywhere</option>
-                  <option value="tisch">Tisch Library</option>
-                  <option value="dewick">Dewick Dining</option>
-                  <option value="halligan">Halligan Hall</option>
-                  <option value="campus">Campus Center</option>
+                    {locations.map((loc) => (
+                        <option key={loc} value={loc}>
+                            {loc}
+                        </option>
+                    ))}
                 </select>
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-bold text-[#555] mb-1">Category</label>
-                <select 
-                  value={categoryFilter} 
+                <select
+                  value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
                   className="w-full p-2 border border-[#e8e8e8] rounded bg-gray-50 focus:outline-none focus:border-[#3E5E8C]"
                 >
                   <option value="all">Any Category</option>
-                  <option value="id">ID Card</option>
-                  <option value="electronics">Electronics</option>
-                  <option value="clothing">Clothing</option>
-                  <option value="other">Other</option>
+                    {tags.map((tag) => (
+                        <option key={tag} value={tag}>{tag}</option>
+                    ))}
                 </select>
               </div>
             </div>
@@ -178,7 +196,7 @@ export default function LostFeedPage() {
               </button>
             </div>
 
-            <img src={selectedItem.picture} alt={selectedItem.name} className="mb-4 h-44 w-full rounded-lg object-cover bg-gray-100" />
+            <img src={images.get(selectedItem.id)} alt={selectedItem.name} className="mb-4 h-44 w-full rounded-lg object-cover bg-gray-100" />
 
             <div className="space-y-2 text-sm text-[#334]">
               <p><span className="font-bold">Where:</span> {selectedItem.location}</p>

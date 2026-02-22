@@ -76,7 +76,7 @@ export async function POST(request: Request) {
       lat: Number(formData.get("lat")),
       lng: Number(formData.get("lng")),
       picture,
-      phoneNumber: String(formData.get("phoneNumber")),
+      phone: String(formData.get("phoneNumber")),
       email: String(formData.get("email")),
     };
   } else {
@@ -110,7 +110,7 @@ export async function POST(request: Request) {
     payload.lat,
     payload.lng,
     payload.picture,
-    payload.phoneNumber,
+    payload.phone,
     payload.email
   );
   await db.close();
