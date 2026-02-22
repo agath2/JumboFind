@@ -1,21 +1,45 @@
 // Team information
 import Link from "next/link";
 
-const TEAM_MEMBERS = [
+const TEAM_GROUPS = [
   {
-    name: "Matt Zhang",
     role: "Frontend Engineer",
-    bio: "Builds smooth, accessible interfaces and keeps the user flow simple.",
+    members: [
+      {
+        name: "Agatha Yang",
+        bio: "Builds smooth, accessible interfaces and keeps the user flow simple.",
+      },
+      {
+        name: "Betty",
+        bio: "Focuses on responsive layouts and interaction polish across devices.",
+      },
+      {
+        name: "Matt Zhang",
+        bio: "Builds clean React components and supports frontend feature integration.",
+      },
+    ],
   },
   {
-    name: "",
     role: "Backend Engineer",
-    bio: "Designs reliable APIs and data models for lost-and-found reports.",
+    members: [
+      {
+        name: "John Smith",
+        bio: "Designs API endpoints and data pipelines for reliable item reporting.",
+      },
+      {
+        name: "Alice Brown",
+        bio: "Works on database models, search performance, and service stability.",
+      },
+    ],
   },
   {
-    name: "",
     role: "Product Designer",
-    bio: "Shapes the UX so posting and finding items takes as few steps as possible.",
+    members: [
+      {
+        name: "Priya Patel",
+        bio: "Shapes the UX so posting and finding items takes as few steps as possible.",
+      },
+    ],
   },
 ];
 
@@ -56,6 +80,28 @@ export default function AboutUs() {
         </div>
 
         <div className="mb-12">
+          <h2 className="mb-5 font-heading text-2xl font-bold md:text-3xl">Our Team</h2>
+          <div className="space-y-8">
+            {TEAM_GROUPS.map((group) => (
+              <section key={group.role}>
+                <h3 className="mb-3 font-heading text-xl font-semibold text-dark-navy/90">{group.role}</h3>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  {group.members.map((member) => (
+                    <article
+                      key={`${group.role}-${member.name}`}
+                      className="rounded-xl border border-dark-navy/15 bg-white p-5 shadow-sm"
+                    >
+                      <h4 className="font-heading text-lg font-semibold">{member.name}</h4>
+                      <p className="mt-2 text-sm leading-7 text-dark-navy/85">{member.bio}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-12">
           <h2 className="mb-5 font-heading text-2xl font-bold md:text-3xl">Our Mission</h2>
           <p className="max-w-4xl text-base leading-8">
             We built JumboFind to make campus lost-and-found less fragmented. Instead of searching across multiple channels,
@@ -63,26 +109,13 @@ export default function AboutUs() {
           </p>
         </div>
 
-        <div className="mb-12">
+        <div>
           <h2 className="mb-5 font-heading text-2xl font-bold md:text-3xl">What We Value</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {VALUES.map((value) => (
               <article key={value.title} className="rounded-xl border border-dark-navy/15 bg-white p-5 shadow-sm">
                 <h3 className="mb-2 font-heading text-xl font-semibold">{value.title}</h3>
                 <p className="text-sm leading-7 text-dark-navy/85">{value.description}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h2 className="mb-5 font-heading text-2xl font-bold md:text-3xl">Our Team</h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {TEAM_MEMBERS.map((member, index) => (
-              <article key={`${member.name || "member"}-${index}`} className="rounded-xl border border-dark-navy/15 bg-white p-5 shadow-sm">
-                <h3 className="font-heading text-xl font-semibold">{member.name || "Team Member"}</h3>
-                <p className="mt-1 text-sm font-semibold text-dark-yellow">{member.role}</p>
-                <p className="mt-3 text-sm leading-7 text-dark-navy/85">{member.bio}</p>
               </article>
             ))}
           </div>
