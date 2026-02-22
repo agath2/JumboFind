@@ -24,7 +24,7 @@ export default function Navbar() {
               Search Item
             </Link>
             <Link href="/reportitem" className="hover:opacity-80 transition">
-              Found Item
+              Report Item
             </Link>
             <Link href="/aboutus" className="hover:opacity-80 transition">
               About Us
