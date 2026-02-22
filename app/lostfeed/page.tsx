@@ -22,6 +22,7 @@ const MOCK_ITEMS: LostItem[] = [
   { id: 4, title: "Grey Scarf", description: "Wool winter scarf", location: "campus", category: "clothing", isFound: false, date: "2026-02-18", imageUrl: "https://via.placeholder.com/400x200?text=Grey+Scarf" },
 ];
 
+
 export default function LostFeedPage() {
   // UI State
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,6 +31,17 @@ export default function LostFeedPage() {
   // Filter State
   const [locationFilter, setLocationFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [data, setData] = useState([])
+  
+    // Do basic search on page load
+  useEffect(() => 
+    console.log("retrieving items")
+
+  )
+
+  const getData = (searchParams) => {
+    
+  }
 
   // THE FULL DATA PIPELINE
   const filteredAndSortedItems = MOCK_ITEMS
