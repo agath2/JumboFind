@@ -4,6 +4,7 @@
 import { analyzeImage } from '../actions/analyzeImage';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { getTags } from '../actions/tags';
 
 export default function ReportItem() {
   const router = useRouter();
@@ -23,10 +24,10 @@ export default function ReportItem() {
   const [locationLoading, setLocationLoading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  const availableTags = [
-    'electronics', 'clothing', 'accessories', 'books', 'keys',
-    'bags', 'jewelry', 'wallet', 'phone', 'laptop', 'water bottle', 'umbrella', 'other',
-  ];
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
+  useEffect(() => {
+    getTags().then(tags => setAvailableTags(tags));
+  }, []);
 
   const getLocation = () => {
     setLocationLoading(true);
