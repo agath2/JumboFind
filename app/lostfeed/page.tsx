@@ -71,6 +71,53 @@ export default function LostFeedPage() {
         Promise.all(items.map(async (item) => [item.id, await getImage(item.picture)] as const)).then(images => setImages(new Map(images)));
     }, [items]);
 
+    // Add this new state to prevent double-clicking
+  const [isClaiming, setIsClaiming] = useState(false);
+
+  // This function calls your new route.ts file
+  const handleClaim = async () => {
+    if (!selectedItem) return;
+
+    if (!window.confirm("Are you sure you want to mark this item as retrieved?")) return;
+
+    setIsClaiming(true);
+
+    try {
+      // NOTE: Update '/api/report-found' to match whatever folder your route.ts is in!
+      const response = await fetch('/reportfound', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: selectedItem.id }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.ok) {
+        // 1. Update the pop-up modal instantly
+        setSelectedItem({ ...selectedItem, found: true });
+
+        // 2. Update the background grid so the card turns grey immediately
+        setItems((prevItems) =>
+          prevItems.map((item) =>
+            item.id === selectedItem.id ? { ...item, found: true } : item
+          )
+        );
+
+        alert("Success! The item has been marked as claimed.");
+      } else {
+        alert(`Error: ${result.msg || "Failed to update item"}`);
+      }
+    } catch (error) {
+      console.error("Error claiming item:", error);
+      alert("An error occurred while updating the database. Please try again.");
+    } finally {
+      setIsClaiming(false);
+    }
+  };
+
+
   // Date Formatter
   // const formatDate = (dateString: string) => {
   //   const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' };
@@ -209,8 +256,27 @@ export default function LostFeedPage() {
 
             <button
               type="button"
+              disabled={selectedItem.found || isClaiming}
+              onClick={handleClaim}
+              className={`mt-5 w-full rounded-lg px-4 py-3 text-sm font-bold text-white transition ${
+                selectedItem.found || isClaiming
+                  ? "cursor-not-allowed bg-gray-400"
+                  : "cursor-pointer bg-[#3E5E8C] hover:bg-[#2f486b]"
+              }`}
+            >
+              {selectedItem.found 
+                ? "Already Claimed" 
+                : isClaiming 
+                  ? "Updating Database..." 
+                  : "I retrieved it"
+              }
+            </button>
+
+{/* 
+            <button
+              type="button"
               disabled={selectedItem.found}
-              onClick={() => alert("Marked! We will connect you with the finder soon.")}
+              onClick={() => alert("Marked!")}
               className={`mt-5 w-full rounded-lg px-4 py-3 text-sm font-bold text-white transition ${
                 selectedItem.found
                   ? "cursor-not-allowed bg-gray-400"
@@ -218,7 +284,7 @@ export default function LostFeedPage() {
               }`}
             >
               {selectedItem.found ? "Already Claimed" : "I retrieved it"}
-            </button>
+            </button> */}
           </div>
         </div>
       )}
