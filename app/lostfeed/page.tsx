@@ -54,10 +54,10 @@ export default function LostFeedPage() {
     }, [items]);
 
   // Date Formatter
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' };
-    return new Date(`${dateString}T12:00:00`).toLocaleDateString('en-US', options);
-  };
+  // const formatDate = (dateString: string) => {
+  //   const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' };
+  //   return new Date(`${dateString}T12:00:00`).toLocaleDateString('en-US', options);
+  // };
 
   return (
     <div className="mt-22 min-h-screen bg-[#f4f6f8] text-[#222]">
@@ -149,7 +149,7 @@ export default function LostFeedPage() {
                     </span>
                   </div>
                   <p className="text-sm text-[#444] mb-1"><span className="font-bold capitalize">Found at:</span> {item.location}</p>
-                  <p className="text-sm text-[#444]"><span className="font-bold">Date:</span> {formatDate(item.date)}</p>
+                  <p className="text-sm text-[#444]"><span className="font-bold">Date:</span> {item.date}</p>
                 </div>
               </button>
             ))}
@@ -182,7 +182,7 @@ export default function LostFeedPage() {
 
             <div className="space-y-2 text-sm text-[#334]">
               <p><span className="font-bold">Where:</span> {selectedItem.location}</p>
-              <p><span className="font-bold">When:</span> {formatDate(selectedItem.date)}</p>
+              <p><span className="font-bold">When:</span> {selectedItem.date}</p>
               <p>
                 <span className="font-bold">Contact:</span>{" "}
                 {selectedItem.email || selectedItem.phone || "Not provided by finder."}
