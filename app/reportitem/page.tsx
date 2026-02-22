@@ -170,8 +170,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     dataToSend.append('name', formData.name);
     dataToSend.append('desc', formData.description); // matches 'desc'
     dataToSend.append('tags', formData.tags.join(',')); // matches comma-separated string
-    dataToSend.append('loc', `Lat: ${formData.lat.toFixed(4)}, Lng: ${formData.long.toFixed(4)}`); // placeholder string for 'loc'
-    dataToSend.append('lat', formData.lat.toString());
+    dataToSend.append('loc', formData.location);
     dataToSend.append('lng', formData.long.toString()); // matches 'lng'
     dataToSend.append('img', formData.picture); // matches 'img'
     
