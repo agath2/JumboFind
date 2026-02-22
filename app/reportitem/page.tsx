@@ -168,14 +168,14 @@ const handleSubmit = async (e: React.FormEvent) => {
   return (
     <div className="min-h-full bg-light-beige p-6 mt-22">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-heading font-bold mb-6">
+        <h1 className="text-3xl font-heading font-bold mb-6 text-black" >
           Report Found Item
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-lg shadow-md p-6">
           
           <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
-            <label className="block text-sm font-bold mb-2">1. Snap a Picture *</label>
+            <label className="block text-sm font-bold mb-2 text-black">1. Snap a Picture *</label>
             <input type="file" accept="image/*" onChange={handleImageChange} className="w-full mb-3" required />
             
             <button
@@ -189,17 +189,17 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
 
           <div>
-            <label className="block text-sm font-bold mb-2">Item Name *</label>
+            <label className="block text-sm font-bold mb-2 text-black">Item Name *</label>
             <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-navy" required />
           </div>
 
           <div>
-            <label className="block text-sm font-bold mb-2">Description *</label>
+            <label className="block text-sm font-bold mb-2 text-black">Description *</label>
             <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-navy" rows={3} required />
           </div>
 
           <div>
-            <label className="block text-sm font-bold mb-2">Tags * (Select all that apply)</label>
+            <label className="block text-sm font-bold mb-2 text-black">Tags * (Select all that apply)</label>
             <div className="flex flex-wrap gap-2">
               {availableTags.map((tag) => (
                 <button key={tag} type="button" onClick={() => handleTagToggle(tag)} className={`px-4 py-2 rounded-full text-sm font-medium transition ${formData.tags.includes(tag) ? 'bg-dark-navy text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
@@ -213,9 +213,10 @@ const handleSubmit = async (e: React.FormEvent) => {
             <h3 className="font-bold text-lg text-dark-navy border-b pb-2">Location Data *</h3>
             
             <div>
-              <label className="block text-sm font-bold mb-2">Campus Zone (For the Feed) *</label>
-              <select value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-navy bg-white" required>
+              <label className="block text-sm font-bold mb-2 text-black">Campus Zone (For the Feed) *</label>
+              <select value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-navy bg-white text-black" required>
                 <option value="" disabled>Select a building/zone...</option>
+                <option value="" disabled className="text-black">Select a building/zone...</option>
                 <option value="tisch">Tisch Library</option>
                 <option value="dewick">Dewick Dining</option>
                 <option value="halligan">Halligan Hall</option>
@@ -224,7 +225,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             </div>
 
             <div>
-              <label className="block text-sm font-bold mb-2">Exact GPS Pin (Required for Map) *</label>
+              <label className="block text-sm font-bold mb-2 text-black">Exact GPS Pin (Required for Map) *</label>
               
               <button 
                 type="button" 
@@ -253,13 +254,13 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
 
           <div className="space-y-4 pt-2">
-            <label className="block text-sm font-bold text-dark-navy">Contact Information (Optional)</label>
+            <label className="block text-sm font-bold text-black">Contact Information (Optional)</label>
             <div>
-              <label className="block text-xs text-gray-600 mb-1">Phone</label>
+              <label className="block text-xs text-black mb-1">Phone</label>
               <input type="tel" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-navy focus:border-transparent" placeholder="(123) 456-7890" />
             </div>
             <div>
-              <label className="block text-xs text-gray-600 mb-1">Email</label>
+              <label className="block text-xs text-black mb-1">Email</label>
               <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-navy focus:border-transparent" placeholder="your.email@tufts.edu" />
             </div>
           </div>
