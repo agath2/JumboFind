@@ -1,9 +1,13 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
   return (
     <main className="flex h-full items-center justify-center bg-[#f4f6f8] px-4 py-30">
@@ -16,9 +20,9 @@ export default function Home() {
           {/* Lost Item Card */}
           <Link
             href="/lostfeed"
-            className="group relative h-64 overflow-hidden rounded-2xl shadow-lg transition-all duration-300 hover:shadow-2xl"
-            onMouseEnter={() => setHoveredItem('lost')}
-            onMouseLeave={() => setHoveredItem(null)}
+            className={`group relative h-64 overflow-hidden rounded-2xl shadow-lg transition-all duration-700 ease-out hover:shadow-2xl ${
+              isLoaded ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+            }`}
           >
             {/* Background Image */}
             <div className="absolute inset-0 overflow-hidden">
@@ -51,9 +55,9 @@ export default function Home() {
           {/* Found Item Card */}
           <Link
             href="/reportitem"
-            className="group relative h-64 overflow-hidden rounded-2xl shadow-lg transition-all duration-300 hover:shadow-2xl"
-            onMouseEnter={() => setHoveredItem('found')}
-            onMouseLeave={() => setHoveredItem(null)}
+            className={`group relative h-64 overflow-hidden rounded-2xl shadow-lg transition-all duration-700 delay-150 ease-out hover:shadow-2xl ${
+              isLoaded ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+            }`}
           >
             {/* Background Image */}
             <div className="absolute inset-0 overflow-hidden">
