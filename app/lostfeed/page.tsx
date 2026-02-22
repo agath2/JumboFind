@@ -1,26 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-// Define the formal TypeScript contract
-type LostItem = {
-  id: number;
-  title: string;
-  description?: string; // The '?' tells TypeScript this field might be missing
-  location: string;
-  category: string;
-  isFound: boolean;
-  date: string;
-  imageUrl: string;
-};
+import {SearchParams} from "../models/searchParams"
+import {SearchItem} from "../models/searchitem"
 
 // Mock Data with YYYY-MM-DD format
-const MOCK_ITEMS: LostItem[] = [
-  { id: 1, title: "Tufts ID Card", description: "Blue Tufts ID card", location: "tisch", category: "id", isFound: false, date: "2026-02-20", imageUrl: "https://via.placeholder.com/400x200?text=Tufts+ID+Card" },
-  { id: 2, title: "Black Water Bottle", description: "Hydro Flask water bottle", location: "dewick", category: "other", isFound: true, date: "2026-02-19", imageUrl: "https://via.placeholder.com/400x200?text=Water+Bottle" },
-  { id: 3, title: "AirPods Case", description: "White AirPods Pro case", location: "halligan", category: "electronics", isFound: false, date: "2026-02-21", imageUrl: "https://via.placeholder.com/400x200?text=AirPods+Case" },
-  { id: 4, title: "Grey Scarf", description: "Wool winter scarf", location: "campus", category: "clothing", isFound: false, date: "2026-02-18", imageUrl: "https://via.placeholder.com/400x200?text=Grey+Scarf" },
-];
+// const MOCK_ITEMS: LostItem[] = [
+//   { id: 1, title: "Tufts ID Card", description: "Blue Tufts ID card", location: "tisch", category: "id", isFound: false, date: "2026-02-20", imageUrl: "https://via.placeholder.com/400x200?text=Tufts+ID+Card" },
+//   { id: 2, title: "Black Water Bottle", description: "Hydro Flask water bottle", location: "dewick", category: "other", isFound: true, date: "2026-02-19", imageUrl: "https://via.placeholder.com/400x200?text=Water+Bottle" },
+//   { id: 3, title: "AirPods Case", description: "White AirPods Pro case", location: "halligan", category: "electronics", isFound: false, date: "2026-02-21", imageUrl: "https://via.placeholder.com/400x200?text=AirPods+Case" },
+//   { id: 4, title: "Grey Scarf", description: "Wool winter scarf", location: "campus", category: "clothing", isFound: false, date: "2026-02-18", imageUrl: "https://via.placeholder.com/400x200?text=Grey+Scarf" },
+// ];
 
 
 export default function LostFeedPage() {
@@ -32,19 +23,70 @@ export default function LostFeedPage() {
   const [locationFilter, setLocationFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [data, setData] = useState([])
-  
-    // Do basic search on page load
-  useEffect(() => 
-    console.log("retrieving items")
 
-  )
+  const toURLSearchParams = (searchParams: SearchParams) => {
+    const params = new URLSearchParams();
 
-  const getData = (searchParams) => {
-    
+    if (searchParams.name) params.append("name", String(searchParams.name));
+    if (searchParams.date) params.append("date", String(searchParams.date));
+    if (searchParams.location) params.append("location", String(searchParams.location));
+    if (searchParams.tags) {
+        // Add each tag as a separate query parameter
+        searchParams.tags.forEach(tag => params.append("tags", tag));
+    }
+    if (searchParams.found !== undefined) params.append("found", String(searchParams.found));
+
+    return params;
   }
 
+  function toSearchItems(jsonArray: any[]): SearchItem[] {
+  return jsonArray.map(item => ({
+    id: Number(item.id),
+    title: String(item.title),
+    description: String(item.desc),
+    location: String(item.location ?? ""),
+    // category: String(item.tags ?? ""),
+    isFound: Boolean(item.found),
+    date: String(item.date),
+    imageUrl: String(item.picture)
+  }));
+}
+
+  const getData = async (searchParams: SearchParams) => {
+    const urlParams = toURLSearchParams(searchParams);
+    try {
+      const response = await fetch(`/tags?`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      console.error("Fetch error:", error);
+      throw error; // re-throw so caller can handle it
+    }
+  };
+  
+    // Do basic search on page load
+  useEffect(() => {
+    (async () => {
+      console.log("retrieving items")
+      const basicSearchParams: SearchParams = {
+          name: "",
+          date: "",
+          location: "",
+          tags: [],
+          found: false
+      };
+      const items = await getData(basicSearchParams)
+      setData(items)
+    })
+}, [])
+
+  
+
   // THE FULL DATA PIPELINE
-  const filteredAndSortedItems = MOCK_ITEMS
+  const filteredAndSortedItems = data
     .filter((item) => {
       // 1. Keyword Match (Searches Title OR Description safely)
       const lowerQuery = searchQuery.toLowerCase();

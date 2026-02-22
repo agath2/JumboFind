@@ -1,16 +1,11 @@
 import {NextResponse} from "next/server";
 import {openDb} from "../db";
 import {LostItem} from "../models/item";
+import {SearchParams} from "../models/searchParams";
+
 
 export async function GET(request: Request) {
     const url = new URL(request.url);
-    type SearchParams = {
-        name?: string;
-        date?: string;
-        location?: string;
-        tags?: string[];
-        found?: boolean;
-    };
 
     const search_params: SearchParams = {
         name: url.searchParams.get("name") || undefined,
