@@ -51,7 +51,7 @@ export default function LostFeedPage() {
     const [images, setImages] = useState(new Map<number, string>());
     useEffect(() => {
         Promise.all(items.map(async (item) => [item.id, await getImage(item.picture)] as const)).then(images => setImages(new Map(images)));
-    });
+    }, [items]);
 
   // Date Formatter
   const formatDate = (dateString: string) => {
