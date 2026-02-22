@@ -180,8 +180,8 @@ const handleSubmit = async (e: React.FormEvent) => {
             <button
               type="button"
               onClick={handleAIAnalyze}
-              disabled={!formData.picture || isAnalyzing}
-              className="w-full px-4 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold rounded-lg hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-2 shadow-md"
+              disabled={isAnalyzing}
+              className="w-full cursor-pointer px-4 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg active:translate-y-0 active:scale-100 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100 disabled:hover:shadow-md flex items-center justify-center gap-2 shadow-md"
             >
               {isAnalyzing ? "✨ Processing Image & GPS..." : "✨ Auto-Fill Details & Location"}
             </button>
