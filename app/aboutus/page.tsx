@@ -10,34 +10,29 @@ const TEAM_GROUPS = [
         bio: "Builds smooth, accessible interfaces and keeps the user flow simple.",
       },
       {
-        name: "Betty",
+        name: "Betty Park",
         bio: "Focuses on responsive layouts and interaction polish across devices.",
       },
       {
         name: "Matt Zhang",
         bio: "Builds clean React components and supports frontend feature integration.",
       },
+      {
+        name: "Cheng Li",
+        bio: "Works on the interactions among pages and ensures the app is intuitive on-the-go.",
+      }
     ],
   },
   {
     role: "Backend Engineer",
     members: [
       {
-        name: "John Smith",
+        name: "Andy Lin",
         bio: "Designs API endpoints and data pipelines for reliable item reporting.",
       },
       {
-        name: "Alice Brown",
-        bio: "Works on database models, search performance, and service stability.",
-      },
-    ],
-  },
-  {
-    role: "Product Designer",
-    members: [
-      {
-        name: "Priya Patel",
-        bio: "Shapes the UX so posting and finding items takes as few steps as possible.",
+        name: "Rhys de Haan",
+        bio: "Worked on databases, backend, and structuring the application.",
       },
     ],
   },
@@ -45,16 +40,16 @@ const TEAM_GROUPS = [
 
 const VALUES = [
   {
-    title: "Fast Recovery",
-    description: "Reduce the time between losing an item and getting it back.",
+    title: "Speed & Efficiency",
+    description: "Make it quick and easy to report and find items with minimal friction.",
   },
   {
     title: "Trust & Safety",
-    description: "Encourage verified, respectful communication across campus.",
+    description: "Foster a supportive community across campus.",
   },
   {
-    title: "Student First",
-    description: "Keep the workflow clear, mobile-friendly, and low-friction.",
+    title: "Simplicity & Clarity",
+    description: "Keep the interface clear, mobile-friendly, and low-friction.",
   },
 ];
 
@@ -80,28 +75,6 @@ export default function AboutUs() {
         </div>
 
         <div className="mb-12">
-          <h2 className="mb-5 font-heading text-2xl font-bold md:text-3xl">Our Team</h2>
-          <div className="space-y-8">
-            {TEAM_GROUPS.map((group) => (
-              <section key={group.role}>
-                <h3 className="mb-3 font-heading text-xl font-semibold text-dark-navy/90">{group.role}</h3>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  {group.members.map((member) => (
-                    <article
-                      key={`${group.role}-${member.name}`}
-                      className="rounded-xl border border-dark-navy/15 bg-white p-5 shadow-sm"
-                    >
-                      <h4 className="font-heading text-lg font-semibold">{member.name}</h4>
-                      <p className="mt-2 text-sm leading-7 text-dark-navy/85">{member.bio}</p>
-                    </article>
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-        </div>
-
-        <div className="mb-12">
           <h2 className="mb-5 font-heading text-2xl font-bold md:text-3xl">Our Mission</h2>
           <p className="max-w-4xl text-base leading-8">
             We built JumboFind to make campus lost-and-found less fragmented. Instead of searching across multiple channels,
@@ -113,10 +86,35 @@ export default function AboutUs() {
           <h2 className="mb-5 font-heading text-2xl font-bold md:text-3xl">What We Value</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {VALUES.map((value) => (
-              <article key={value.title} className="rounded-xl border border-dark-navy/15 bg-white p-5 shadow-sm">
+              <article
+                key={value.title}
+                className="rounded-xl border border-dark-navy/15 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-lg"
+              >
                 <h3 className="mb-2 font-heading text-xl font-semibold">{value.title}</h3>
                 <p className="text-sm leading-7 text-dark-navy/85">{value.description}</p>
               </article>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-12">
+          <h2 className="mb-5 font-heading text-2xl font-bold md:text-3xl">Our Team</h2>
+          <div className="space-y-8">
+            {TEAM_GROUPS.map((group) => (
+              <section key={group.role}>
+                <h3 className="mb-3 font-heading text-xl font-semibold text-dark-navy/90">{group.role}</h3>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  {group.members.map((member) => (
+                    <article
+                      key={`${group.role}-${member.name}`}
+                      className="rounded-xl border border-dark-navy/15 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-lg"
+                    >
+                      <h4 className="font-heading text-lg font-semibold">{member.name}</h4>
+                      <p className="mt-2 text-sm leading-7 text-dark-navy/85">{member.bio}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
         </div>

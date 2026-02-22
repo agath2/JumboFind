@@ -2,33 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-// Define the formal TypeScript contract
-type LostItem = {
-  id: number;
-  title: string;
-  description?: string; // The '?' tells TypeScript this field might be missing
-  location: string;
-  category: string;
-  isFound: boolean;
-  date: string;
-  imageUrl: string;
-  contactInfo?: string;
-};
-
-const LOCATION_LABELS: Record<string, string> = {
-  tisch: "Tisch Library",
-  dewick: "Dewick Dining",
-  halligan: "Halligan Hall",
-  campus: "Campus Center",
-};
-
-// Mock Data with YYYY-MM-DD format
-const MOCK_ITEMS: LostItem[] = [
-  { id: 1, title: "Tufts ID Card", description: "Blue Tufts ID card", location: "tisch", category: "id", isFound: false, date: "2026-02-20", imageUrl: "https://via.placeholder.com/400x200?text=Tufts+ID+Card", contactInfo: "maria.lee@tufts.edu" },
-  { id: 2, title: "Black Water Bottle", description: "Hydro Flask water bottle", location: "dewick", category: "other", isFound: true, date: "2026-02-19", imageUrl: "https://via.placeholder.com/400x200?text=Water+Bottle" },
-  { id: 3, title: "AirPods Case", description: "White AirPods Pro case", location: "halligan", category: "electronics", isFound: false, date: "2026-02-21", imageUrl: "https://via.placeholder.com/400x200?text=AirPods+Case", contactInfo: "(617) 555-0182" },
-  { id: 4, title: "Grey Scarf", description: "Wool winter scarf", location: "campus", category: "clothing", isFound: false, date: "2026-02-18", imageUrl: "https://via.placeholder.com/400x200?text=Grey+Scarf" },
-];
+import {LostItem} from "../items";
+import {openDb} from "@/app/db";
 
 
 export default function LostFeedPage() {
@@ -41,13 +16,22 @@ export default function LostFeedPage() {
   const [locationFilter, setLocationFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
+  const [items, setItems] = useState<LostItem[]>([]);
+
   // Do basic search on page load
   useEffect(() => {
-    console.log("retrieving items");
+    const getItems = async function() {
+      const db = await openDb();
+      const rows = await db.all(`SELECT * FROM items`);
+      await db.close();
+      return rows;
+    }
+
+    getItems().then(setItems);
   }, []);
 
   // THE FULL DATA PIPELINE
-  const filteredAndSortedItems = MOCK_ITEMS
+  const filteredAndSortedItems = items
     .filter((item) => {
       // 1. Keyword Match (Searches Title OR Description safely)
       const lowerQuery = searchQuery.toLowerCase();
@@ -78,8 +62,6 @@ export default function LostFeedPage() {
     const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' };
     return new Date(`${dateString}T12:00:00`).toLocaleDateString('en-US', options);
   };
-
-  const formatLocation = (locationCode: string) => LOCATION_LABELS[locationCode] || locationCode;
 
   return (
     <div className="mt-22 min-h-screen bg-[#f4f6f8] text-[#222]">
@@ -203,7 +185,7 @@ export default function LostFeedPage() {
             <img src={selectedItem.imageUrl} alt={selectedItem.title} className="mb-4 h-44 w-full rounded-lg object-cover bg-gray-100" />
 
             <div className="space-y-2 text-sm text-[#334]">
-              <p><span className="font-bold">Where:</span> {formatLocation(selectedItem.location)}</p>
+              <p><span className="font-bold">Where:</span> {selectedItem.location}</p>
               <p><span className="font-bold">When:</span> {formatDate(selectedItem.date)}</p>
               <p>
                 <span className="font-bold">Contact:</span>{" "}

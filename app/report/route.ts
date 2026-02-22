@@ -42,12 +42,20 @@ export async function POST(request: Request) {
       const buffer = await file.arrayBuffer();
       const webp = sharp(Buffer.from(buffer)).webp({ quality: 80 });
 
-      const hash = createHash("sha256")
+      let hash = createHash("sha256")
         .update(await webp.toBuffer())
         .digest("hex");
-      if (!fs.existsSync(`./data/img/${hash}.webp`)) {
-        await webp.toFile(`./data/img/${hash}.webp`);
+      
+      let saved = false;
+      while(!saved) {
+        if (!fs.existsSync(`./data/img/${hash}.webp`)) {
+          await webp.toFile(`./data/img/${hash}.webp`);
+          saved = true
+        }
+        else 
+          hash = createHash("sha256").update(hash).digest("hex")
       }
+        
       picture = hash;
     } catch (error) {
       console.error("[report] Failed to convert image to WebP:", error);
