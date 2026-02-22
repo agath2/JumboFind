@@ -26,10 +26,21 @@ export default function ReportItem() {
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [locations, setLocations] = useState<string[]>([]); 
 
+  const parseJsonResponse = async (res: Response) => {
+    const raw = await res.text();
+    try {
+      return JSON.parse(raw);
+    } catch {
+      throw new Error(`Invalid JSON response: ${raw.slice(0, 140)}`);
+    }
+  };
+
   const fetchTags = async (): Promise<string[]> => {
   try {
     const res = await fetch('/tags');
-    const data = await res.json();
+    if (!res.ok) throw new Error(`Failed /tags: ${res.status}`);
+    const data = await parseJsonResponse(res);
+    if (!Array.isArray(data?.data)) return [];
     // Extract only the "name" field from each object
     return data.data.map((item: any) => String(item.name));
   } catch (error) {
@@ -41,7 +52,9 @@ export default function ReportItem() {
 const fetchLocations = async (): Promise<string[]> => {
   try {
     const res = await fetch('/locations');
-    const data = await res.json();
+    if (!res.ok) throw new Error(`Failed /locations: ${res.status}`);
+    const data = await parseJsonResponse(res);
+    if (!Array.isArray(data?.data)) return [];
     // Extract only the "name" field from each object
     return data.data.map((item: any) => String(item.name));
   } catch (error) {
@@ -171,6 +184,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     dataToSend.append('desc', formData.description); // matches 'desc'
     dataToSend.append('tags', formData.tags.join(',')); // matches comma-separated string
     dataToSend.append('loc', formData.location);
+    dataToSend.append('lat', formData.lat.toString()); // matches 'lat'
     dataToSend.append('lng', formData.long.toString()); // matches 'lng'
     dataToSend.append('img', formData.picture); // matches 'img'
     
