@@ -1,26 +1,104 @@
+"use client";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#f4f6f8] px-4">
-      <div className="w-full max-w-md text-center">
-        <h1 className="mb-10 text-4xl font-bold text-[#3E5E8C]">
+    <main className="relative flex h-full items-center justify-center px-4 py-30">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/images/tuftsmap.jpg"
+          alt="Background"
+          className="h-full w-full object-cover"
+        />
+        {/* Optional overlay for better contrast */}
+        <div className="absolute inset-0 bg-white/70" />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 w-full max-w-4xl">
+        <h1 className="mt-10 mb-16 text-center text-5xl font-heading font-bold text-dark-navy">
           Tufts Lost and Found
         </h1>
-        <div className="space-y-4">
-            <Link
-              href="/lostfeed"
-              className="block w-full rounded-lg bg-dark-yellow px-6 py-4 text-lg font-medium text-dark-brown transition hover:bg-[#d18e3a]"
-            >
-              Lost
-            </Link> 
-            <Link
-              href="/reportitem"
-              className="block w-full rounded-lg bg-dark-yellow px-6 py-4 text-lg font-medium text-dark-brown transition hover:bg-[#d18e3a]"
-            >
-              Found
-            </Link>
-          </div>
+        
+        <div className="flex flex-col gap-8">
+          {/* Lost Item Card */}
+          <Link
+            href="/lostfeed"
+            className={`group relative h-64 overflow-hidden rounded-2xl shadow-lg transition-all duration-700 ease-out hover:shadow-2xl ${
+              isLoaded ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+            }`}
+          >
+            {/* Background Image */}
+            <div className="absolute inset-0 overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1765000884289-baee6a441acd?w=800&q=80"
+                alt="Lost items"
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              {/* Dark overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-dark-navy/80 to-dark-navy/60 transition-opacity duration-300 group-hover:opacity-90" />
+            </div>
+
+            {/* Content */}
+            <div className="relative z-10 flex h-full items-center justify-between px-12">
+              <div className="text-left">
+                <h2 className="text-6xl font-heading font-bold text-white transition-all duration-300 group-hover:translate-x-4">
+                  Lost
+                </h2>
+                <p className="mt-2 text-lg text-light-beige opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-4">
+                  Search for your lost items
+                </p>
+              </div>
+              
+              <div className="text-4xl text-white opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-2">
+                →
+              </div>
+            </div>
+          </Link>
+
+          {/* Found Item Card */}
+          <Link
+            href="/reportitem"
+            className={`group relative h-64 overflow-hidden rounded-2xl shadow-lg transition-all duration-700 delay-150 ease-out hover:shadow-2xl ${
+              isLoaded ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+            }`}
+          >
+            {/* Background Image */}
+            <div className="absolute inset-0 overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1668261584978-c800ae21b237?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Found items"
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              {/* Dark overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-dark-yellow/80 to-dark-yellow/60 transition-opacity duration-300 group-hover:opacity-90" />
+            </div>
+
+            {/* Content */}
+            <div className="relative z-10 flex h-full items-center justify-between px-12">
+              <div className="text-left">
+                <h2 className="text-6xl font-heading font-bold text-dark-brown transition-all duration-300 group-hover:translate-x-4">
+                  Found
+                </h2>
+                <p className="mt-2 text-lg text-dark-brown opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-4">
+                  Report items you've found
+                </p>
+              </div>
+              
+              <div className="text-4xl text-dark-brown opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-2">
+                →
+              </div>
+            </div>
+          </Link>
+        </div>
       </div>
     </main>
   );

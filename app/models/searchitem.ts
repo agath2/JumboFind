@@ -3,7 +3,7 @@ export type SearchItem = {
     title: string, 
     description: string, 
     location: string, 
-    category: string, 
+    categories: string[], 
     isFound: boolean, 
     date: string, 
     imageUrl: string

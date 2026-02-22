@@ -22,7 +22,7 @@ export default function LostFeedPage() {
   // Filter State
   const [locationFilter, setLocationFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [data, setData] = useState([])
+  const [data, setData] = useState<SearchItem[]>([]);
 
   const toURLSearchParams = (searchParams: SearchParams) => {
     const params = new URLSearchParams();
@@ -39,23 +39,27 @@ export default function LostFeedPage() {
     return params;
   }
 
-  function toSearchItems(jsonArray: any[]): SearchItem[] {
-  return jsonArray.map(item => ({
-    id: Number(item.id),
-    title: String(item.title),
-    description: String(item.desc),
-    location: String(item.location ?? ""),
-    // category: String(item.tags ?? ""),
-    isFound: Boolean(item.found),
-    date: String(item.date),
-    imageUrl: String(item.picture)
-  }));
-}
+  const toSearchItems = (jsonArray: any[]): SearchItem[] => {
+    const items: SearchItem[] = [];
+    jsonArray.forEach(item => {
+      items.push({
+        id: Number(item.id ?? 0),
+        title: String(item.title ?? ""),
+        description: String(item.desc ?? ""), 
+        location: String(item.location ?? ""),
+        categories: item.tags as string[],
+        isFound: Boolean(item.found ?? false),
+        date: String(item.date ?? ""),
+        imageUrl: String(item.picture ?? "")
+      });
+    });
+    return items;
+  }
 
   const getData = async (searchParams: SearchParams) => {
     const urlParams = toURLSearchParams(searchParams);
     try {
-      const response = await fetch(`/tags?`);
+      const response = await fetch(`/search?${urlParams}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -101,7 +105,7 @@ export default function LostFeedPage() {
       // 2. Location Match
       const matchesLocation = locationFilter === "all" || item.location === locationFilter;
       // 3. Category Match
-      const matchesCategory = categoryFilter === "all" || item.category === categoryFilter;
+      const matchesCategory = categoryFilter === "all" || item.categories in categoryFilter;
       
       return matchesSearch && matchesLocation && matchesCategory;
     })
