@@ -105,7 +105,7 @@ export default function LostFeedPage() {
       // 2. Location Match
       const matchesLocation = locationFilter === "all" || item.location === locationFilter;
       // 3. Category Match
-      const matchesCategory = categoryFilter === "all" || item.categories in categoryFilter;
+      const matchesCategory = categoryFilter === "all" || categoryFilter in item.categories;
       
       return matchesSearch && matchesLocation && matchesCategory;
     })
