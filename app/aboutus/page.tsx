@@ -32,7 +32,7 @@ const TEAM_GROUPS = [
       },
       {
         name: "Rhys de Haan",
-        bio: "Worked on dt=atabases, backend, and structuring the application.",
+        bio: "Worked on databases, backend, and structuring the application.",
       },
     ],
   },
@@ -86,7 +86,10 @@ export default function AboutUs() {
           <h2 className="mb-5 font-heading text-2xl font-bold md:text-3xl">What We Value</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {VALUES.map((value) => (
-              <article key={value.title} className="rounded-xl border border-dark-navy/15 bg-white p-5 shadow-sm">
+              <article
+                key={value.title}
+                className="rounded-xl border border-dark-navy/15 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-lg"
+              >
                 <h3 className="mb-2 font-heading text-xl font-semibold">{value.title}</h3>
                 <p className="text-sm leading-7 text-dark-navy/85">{value.description}</p>
               </article>
@@ -104,7 +107,7 @@ export default function AboutUs() {
                   {group.members.map((member) => (
                     <article
                       key={`${group.role}-${member.name}`}
-                      className="rounded-xl border border-dark-navy/15 bg-white p-5 shadow-sm"
+                      className="rounded-xl border border-dark-navy/15 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-lg"
                     >
                       <h4 className="font-heading text-lg font-semibold">{member.name}</h4>
                       <p className="mt-2 text-sm leading-7 text-dark-navy/85">{member.bio}</p>
