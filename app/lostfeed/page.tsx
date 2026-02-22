@@ -16,6 +16,7 @@ export default function LostFeedPage() {
   const [locationFilter, setLocationFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
+  const [allItems, setAllItems] = useState<LostItem[]>([]);
   const [items, setItems] = useState<LostItem[]>([]);
   const [tags, setTags] = useState<string[]>([])
 
@@ -33,12 +34,8 @@ export default function LostFeedPage() {
 
     const [locations, setLocations] = useState<string[]>([]);
 
-  // Do basic search on page load
-  useEffect(() => {
-      fetchLocations().then(locs => setLocations(locs));
-      getTags().then(tags => setTags(tags));
-      getItems().then(items => {
-        items = items.filter((item) => {
+    function reloadItems() {
+        const i = allItems.filter((item) => {
             // 1. Keyword Match (Searches Title OR Description safely)
             const lowerQuery = searchQuery.toLowerCase();
             const matchesTitle = item.name.toLowerCase().includes(lowerQuery);
@@ -52,7 +49,7 @@ export default function LostFeedPage() {
             // 2. Location Match
             const matchesLocation = locationFilter === "all" || item.location === locationFilter;
             // 3. Category Match
-            const matchesCategory = categoryFilter === "all" || categoryFilter in item.tags;
+            const matchesCategory = categoryFilter === "all" || item.tags.includes(categoryFilter);
 
             return matchesSearch && matchesLocation && matchesCategory;
         })
@@ -62,20 +59,28 @@ export default function LostFeedPage() {
                 // 5. Sort by Date (Newest first, relies on YYYY-MM-DD)
                 return b.date.localeCompare(a.date);
             });
-        setItems(items);
+        setItems(i);
+    }
+
+  // Do basic search on page load
+  useEffect(() => {
+      fetchLocations().then(locs => setLocations(locs));
+      getTags().then(tags => setTags(tags));
+      getItems().then(items => {
+          setAllItems(items);
     });
   }, []);
+
+    useEffect(() => {
+        reloadItems();
+    }, [searchQuery, locationFilter, categoryFilter, allItems]);
 
     const [images, setImages] = useState(new Map<number, string>());
     useEffect(() => {
         Promise.all(items.map(async (item) => [item.id, await getImage(item.picture)] as const)).then(images => setImages(new Map(images)));
     }, [items]);
 
-  // Date Formatter
-  // const formatDate = (dateString: string) => {
-  //   const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' };
-  //   return new Date(`${dateString}T12:00:00`).toLocaleDateString('en-US', options);
-  // };
+    function n(s: string | undefined) { return s === 'null' ? null : s }
 
   return (
     <div className="mt-22 min-h-screen bg-[#f4f6f8] text-[#222]">
@@ -203,7 +208,7 @@ export default function LostFeedPage() {
               <p><span className="font-bold">When:</span> {selectedItem.date}</p>
               <p>
                 <span className="font-bold">Contact:</span>{" "}
-                {selectedItem.email || selectedItem.phone || "Not provided by finder."}
+                {n(selectedItem.email) || n(selectedItem.phone) || "Not provided by finder"}
               </p>
             </div>
 

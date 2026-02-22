@@ -15,7 +15,7 @@ export default async function LostPage(searchParams: Promise<{ location?: string
       return false;
     }
 
-    if (categoryFilter !== "all" && categoryFilter !in item.tags) {
+    if (categoryFilter !== "all" && !item.tags.includes(categoryFilter)) {
       return false;
     }
 
