@@ -1,5 +1,5 @@
 import { openDb } from "@/app/db";
-import tags from "@/app/models/tags"
+import {tags} from "@/app/models/tags"
 import * as fs from "node:fs";
 
 async function setup() {
