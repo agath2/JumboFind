@@ -5,6 +5,7 @@ import { analyzeImage } from '../actions/analyzeImage';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getTags } from '../actions/tags';
+import InteractiveDotsBackground from "../components/InteractiveDotsBackground";
 
 export default function ReportItem() {
   const router = useRouter();
@@ -166,15 +167,26 @@ const handleSubmit = async (e: React.FormEvent) => {
 };
 
   return (
-    <div className="min-h-full bg-light-beige p-6 mt-22">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-heading font-bold mb-6">
+    <div className="relative min-h-full overflow-hidden bg-light-beige p-6 mt-22">
+      <InteractiveDotsBackground />
+      <div className="relative z-10 max-w-2xl mx-auto">
+        <h1
+          className="mb-6 text-3xl font-heading font-bold opacity-0 [animation:fadeInUp_700ms_ease-out_forwards]"
+          style={{ animationDelay: "60ms" }}
+        >
           Report Found Item
         </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-lg shadow-md p-6">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 rounded-lg bg-white p-6 shadow-md opacity-0 [animation:fadeInUp_700ms_ease-out_forwards]"
+          style={{ animationDelay: "100ms" }}
+        >
           
-          <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+          <div
+            className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-4 opacity-0 [animation:fadeInUp_700ms_ease-out_forwards]"
+            style={{ animationDelay: "140ms" }}
+          >
             <label className="block text-sm font-bold mb-2">1. Snap a Picture *</label>
             <input type="file" accept="image/*" onChange={handleImageChange} className="w-full mb-3" required />
             
@@ -188,17 +200,17 @@ const handleSubmit = async (e: React.FormEvent) => {
             </button>
           </div>
 
-          <div>
+          <div className="opacity-0 [animation:fadeInUp_700ms_ease-out_forwards]" style={{ animationDelay: "220ms" }}>
             <label className="block text-sm font-bold mb-2">Item Name *</label>
             <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-navy" required />
           </div>
 
-          <div>
+          <div className="opacity-0 [animation:fadeInUp_700ms_ease-out_forwards]" style={{ animationDelay: "300ms" }}>
             <label className="block text-sm font-bold mb-2">Description *</label>
             <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-navy" rows={3} required />
           </div>
 
-          <div>
+          <div className="opacity-0 [animation:fadeInUp_700ms_ease-out_forwards]" style={{ animationDelay: "380ms" }}>
             <label className="block text-sm font-bold mb-2">Tags * (Select all that apply)</label>
             <div className="flex flex-wrap gap-2">
               {availableTags.map((tag) => (
@@ -209,7 +221,10 @@ const handleSubmit = async (e: React.FormEvent) => {
             </div>
           </div>
 
-          <div className="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-4">
+          <div
+            className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4 opacity-0 [animation:fadeInUp_700ms_ease-out_forwards]"
+            style={{ animationDelay: "460ms" }}
+          >
             <h3 className="font-bold text-lg text-dark-navy border-b pb-2">Location Data *</h3>
             
             <div>
@@ -252,7 +267,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             </div>
           </div>
 
-          <div className="space-y-4 pt-2">
+          <div className="space-y-4 pt-2 opacity-0 [animation:fadeInUp_700ms_ease-out_forwards]" style={{ animationDelay: "540ms" }}>
             <label className="block text-sm font-bold text-dark-navy">Contact Information (Optional)</label>
             <div>
               <label className="block text-xs text-gray-600 mb-1">Phone</label>
@@ -264,7 +279,11 @@ const handleSubmit = async (e: React.FormEvent) => {
             </div>
           </div>
 
-          <button type="submit" className="w-full px-6 py-4 bg-dark-navy text-white text-lg font-bold rounded-lg hover:opacity-90 transition shadow-md">
+          <button
+            type="submit"
+            className="w-full rounded-lg bg-dark-navy px-6 py-4 text-lg font-bold text-white opacity-0 shadow-md transition hover:opacity-90 [animation:fadeInUp_700ms_ease-out_forwards]"
+            style={{ animationDelay: "620ms" }}
+          >
             Submit Found Item
           </button>
         </form>
