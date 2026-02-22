@@ -1,96 +1,37 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import {SearchParams} from "../models/searchParams"
-import {SearchItem} from "../models/searchitem"
-
-// Mock Data with YYYY-MM-DD format
-// const MOCK_ITEMS: LostItem[] = [
-//   { id: 1, title: "Tufts ID Card", description: "Blue Tufts ID card", location: "tisch", category: "id", isFound: false, date: "2026-02-20", imageUrl: "https://via.placeholder.com/400x200?text=Tufts+ID+Card" },
-//   { id: 2, title: "Black Water Bottle", description: "Hydro Flask water bottle", location: "dewick", category: "other", isFound: true, date: "2026-02-19", imageUrl: "https://via.placeholder.com/400x200?text=Water+Bottle" },
-//   { id: 3, title: "AirPods Case", description: "White AirPods Pro case", location: "halligan", category: "electronics", isFound: false, date: "2026-02-21", imageUrl: "https://via.placeholder.com/400x200?text=AirPods+Case" },
-//   { id: 4, title: "Grey Scarf", description: "Wool winter scarf", location: "campus", category: "clothing", isFound: false, date: "2026-02-18", imageUrl: "https://via.placeholder.com/400x200?text=Grey+Scarf" },
-// ];
+import {LostItem} from "../items";
+import {openDb} from "@/app/db";
 
 
 export default function LostFeedPage() {
   // UI State
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false); // Controls the Fold/Unfold
+  const [selectedItem, setSelectedItem] = useState<LostItem | null>(null);
   
   // Filter State
   const [locationFilter, setLocationFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [data, setData] = useState<SearchItem[]>([]);
 
-  const toURLSearchParams = (searchParams: SearchParams) => {
-    const params = new URLSearchParams();
+  const [items, setItems] = useState<LostItem[]>([]);
 
-    if (searchParams.name) params.append("name", String(searchParams.name));
-    if (searchParams.date) params.append("date", String(searchParams.date));
-    if (searchParams.location) params.append("location", String(searchParams.location));
-    if (searchParams.tags) {
-        // Add each tag as a separate query parameter
-        searchParams.tags.forEach(tag => params.append("tags", tag));
-    }
-    if (searchParams.found !== undefined) params.append("found", String(searchParams.found));
-
-    return params;
-  }
-
-  const toSearchItems = (jsonArray: any[]): SearchItem[] => {
-    const items: SearchItem[] = [];
-    jsonArray.forEach(item => {
-      items.push({
-        id: Number(item.id ?? 0),
-        title: String(item.title ?? ""),
-        description: String(item.desc ?? ""), 
-        location: String(item.location ?? ""),
-        categories: item.tags as string[],
-        isFound: Boolean(item.found ?? false),
-        date: String(item.date ?? ""),
-        imageUrl: String(item.picture ?? "")
-      });
-    });
-    return items;
-  }
-
-  const getData = async (searchParams: SearchParams) => {
-    const urlParams = toURLSearchParams(searchParams);
-    try {
-      const response = await fetch(`/search?${urlParams}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      return data.data;
-    } catch (error) {
-      console.error("Fetch error:", error);
-      throw error; // re-throw so caller can handle it
-    }
-  };
-  
-    // Do basic search on page load
+  // Do basic search on page load
   useEffect(() => {
-    (async () => {
-      console.log("retrieving items")
-      const basicSearchParams: SearchParams = {
-          name: "",
-          date: "",
-          location: "",
-          tags: [],
-          found: false
-      };
-      const items = await getData(basicSearchParams)
-      setData(items)
-    })
-}, [])
+    const getItems = async function() {
+      const db = await openDb();
+      const rows = await db.all(`SELECT * FROM items`);
+      await db.close();
+      return rows;
+    }
 
-  
+    getItems().then(setItems);
+  }, []);
 
   // THE FULL DATA PIPELINE
-  const filteredAndSortedItems = data
+  const filteredAndSortedItems = items
     .filter((item) => {
       // 1. Keyword Match (Searches Title OR Description safely)
       const lowerQuery = searchQuery.toLowerCase();
@@ -105,7 +46,7 @@ export default function LostFeedPage() {
       // 2. Location Match
       const matchesLocation = locationFilter === "all" || item.location === locationFilter;
       // 3. Category Match
-      const matchesCategory = categoryFilter === "all" || categoryFilter in item.categories;
+      const matchesCategory = categoryFilter === "all" || item.category === categoryFilter;
       
       return matchesSearch && matchesLocation && matchesCategory;
     })
@@ -201,10 +142,14 @@ export default function LostFeedPage() {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredAndSortedItems.map((item) => (
-              <article
+              <button
                 key={item.id}
-                className={`overflow-hidden rounded-xl border-l-8 bg-white shadow-sm transition-all ${
-                  item.isFound ? "border-red-500 opacity-60" : "border-green-500"
+                type="button"
+                onClick={() => setSelectedItem(item)}
+                className={`cursor-pointer overflow-hidden rounded-xl border-l-8 bg-white shadow-sm transition-all ${
+                  item.isFound
+                    ? "border-red-500 opacity-60"
+                    : "border-green-500 hover:-translate-y-0.5 hover:shadow-md"
                 }`}
               >
                 <img src={item.imageUrl} alt={item.title} className="h-[160px] w-full object-cover bg-gray-100" />
@@ -220,12 +165,59 @@ export default function LostFeedPage() {
                   <p className="text-sm text-[#444] mb-1"><span className="font-bold capitalize">Where:</span> {item.location}</p>
                   <p className="text-sm text-[#444]"><span className="font-bold">Date:</span> {formatDate(item.date)}</p>
                 </div>
-              </article>
+              </button>
             ))}
           </div>
         )}
 
       </main>
+
+      {selectedItem && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
+          onClick={() => setSelectedItem(null)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-3 flex items-start justify-between">
+              <h2 className="pr-3 text-xl font-bold text-[#1f3552]">{selectedItem.title}</h2>
+              <button
+                type="button"
+                onClick={() => setSelectedItem(null)}
+                className="cursor-pointer rounded-md px-2 py-1 text-sm font-semibold text-[#3E5E8C] hover:bg-[#eef5ff]"
+              >
+                ✕
+              </button>
+            </div>
+
+            <img src={selectedItem.imageUrl} alt={selectedItem.title} className="mb-4 h-44 w-full rounded-lg object-cover bg-gray-100" />
+
+            <div className="space-y-2 text-sm text-[#334]">
+              <p><span className="font-bold">Where:</span> {selectedItem.location}</p>
+              <p><span className="font-bold">When:</span> {formatDate(selectedItem.date)}</p>
+              <p>
+                <span className="font-bold">Contact:</span>{" "}
+                {selectedItem.contactInfo || "Not provided by finder."}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              disabled={selectedItem.isFound}
+              onClick={() => alert("Marked! We will connect you with the finder soon.")}
+              className={`mt-5 w-full rounded-lg px-4 py-3 text-sm font-bold text-white transition ${
+                selectedItem.isFound
+                  ? "cursor-not-allowed bg-gray-400"
+                  : "cursor-pointer bg-[#3E5E8C] hover:bg-[#2f486b]"
+              }`}
+            >
+              {selectedItem.isFound ? "Already Claimed" : "I found it"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
